@@ -46,3 +46,34 @@ def make_pdf(pages: list[list[str]]) -> bytes:
         f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n"
     ).encode()
     return bytes(out)
+
+
+class KeywordEmbedder:
+    """Deterministic embedder with predictable similarity: one dimension per keyword.
+
+    Texts sharing keywords are close; the last dimension is a small constant so no vector is
+    all-zero (cosine distance is undefined for zero vectors).
+    """
+
+    VOCAB = ("probe", "deployment", "secret", "volume", "network", "scheduler", "rollback")
+
+    def __init__(self, dim: int = 384, model_name: str = "keyword-embedder"):
+        self.dim = dim
+        self.model_name = model_name
+        self.document_calls = 0
+
+    def _vec(self, text: str) -> list[float]:
+        lower = text.lower()
+        v = [0.0] * self.dim
+        for i, word in enumerate(self.VOCAB):
+            v[i] = float(lower.count(word))
+        v[-1] = 0.1
+        norm = sum(x * x for x in v) ** 0.5
+        return [x / norm for x in v]
+
+    def embed_documents(self, texts):
+        self.document_calls += 1
+        return [self._vec(t) for t in texts]
+
+    def embed_query(self, text):
+        return self._vec(text)

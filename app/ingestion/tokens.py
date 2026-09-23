@@ -1,10 +1,18 @@
 """Approximate token counting.
 
 Chunk sizes are configured in tokens, but tying ingestion to one model's tokenizer would
-make chunk boundaries change whenever the embedding or LLM model changes. Instead we count
-word and punctuation pieces as a model-independent proxy. Chunk sizes are therefore
-approximate by design, and the metadata records `token_count` using this same estimator.
-(How far this proxy is from the embedding model's real tokenizer is measured in phase 3.)
+make chunk boundaries move whenever the embedding or LLM model changes. Instead this is a
+model-independent heuristic, calibrated against a real subword tokenizer.
+
+Calibration (scripts/audit_chunk_tokens.py, bge-small WordPiece, 3,062 Kubernetes-docs
+chunks): a naive "one token per word" count gave estimate/actual = 0.87 median and 0.43
+worst case. The worst cases were hex IDs, wide tables and long CamelCase identifiers, all
+of which WordPiece splits into many pieces. The rules below give a median of 0.98 and a
+worst underestimate of 0.70 (see docs/ingestion.md for the measured numbers):
+
+- a word piece costs 1 token per ~7 characters
+- a piece mixing letters and digits (hashes, IDs, versions) costs 1 token per ~2 characters
+- CamelCase identifiers are costed per component
 """
 
 from __future__ import annotations
@@ -12,13 +20,24 @@ from __future__ import annotations
 import re
 
 _PIECE = re.compile(r"\w+|[^\w\s]")
-# Subword tokenizers split long runs (identifiers, hashes, base64) into many tokens. Counting
-# each run as one token would let such text blow past the embedder's input limit.
-_CHARS_PER_LONG_TOKEN = 10
+_CAMEL_PART = re.compile(r"[A-Z]?[a-z]+|[A-Z]+(?![a-z])|\d+")
+_WORD_CHARS = 7
+_MIXED_CHARS = 2
+
+
+def _cost(run: str, chars_per_token: int) -> int:
+    return 1 + (len(run) - 1) // chars_per_token
 
 
 def piece_tokens(piece: str) -> int:
-    return 1 + (len(piece) - 1) // _CHARS_PER_LONG_TOKEN
+    if not (piece[0].isalnum() or piece[0] == "_"):
+        return 1  # punctuation
+    if any(c.isdigit() for c in piece) and any(c.isalpha() for c in piece):
+        return _cost(piece, _MIXED_CHARS)
+    parts = _CAMEL_PART.findall(piece)
+    if len(parts) > 1:
+        return sum(_cost(p, _WORD_CHARS) for p in parts)
+    return _cost(piece, _WORD_CHARS)
 
 
 def estimate_tokens(text: str) -> int:

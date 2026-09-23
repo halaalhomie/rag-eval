@@ -19,6 +19,7 @@ from app.db.session import session_scope
 from app.ingestion.kubernetes import KubernetesCorpus, kubernetes_metadata
 from app.ingestion.loaders import SUFFIX_TYPES
 from app.ingestion.pipeline import IngestionPipeline, corpus_stats
+from app.retrieval.embeddings import get_embedder
 from app.utils.logging import configure_logging
 
 DEFAULT_CHECKOUT = Path("data/raw/kubernetes-website")
@@ -43,12 +44,14 @@ if __name__ == "__main__":
     src.add_argument("--path", type=Path, action="append")
     parser.add_argument("--checkout", type=Path, default=DEFAULT_CHECKOUT)
     parser.add_argument("--limit", type=int, help="ingest only the first N files")
+    parser.add_argument("--no-embed", action="store_true", help="chunk only, skip embeddings")
     args = parser.parse_args()
 
     settings = get_settings()
     configure_logging(settings.observability.log_level)
     init_db()
-    pipeline = IngestionPipeline(settings)  # embeddings are attached in phase 3
+    embedder = None if args.no_embed else get_embedder(settings.embedding)
+    pipeline = IngestionPipeline(settings, embedder)
 
     if args.corpus == "kubernetes":
         if not (args.checkout / "hugo.toml").exists():

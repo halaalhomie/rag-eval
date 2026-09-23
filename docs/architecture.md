@@ -138,6 +138,19 @@ preprocessor (Hugo shortcodes for the Kubernetes docs) resolves template syntax;
 structure-aware chunker emits parent and child *offsets*; the pipeline upserts idempotently,
 keyed on a fingerprint of content, chunker config and embedding model.
 
+## LLM providers
+
+See [generation.md](generation.md). There is one provider-neutral interface
+(`LLMClient.complete`) and one real implementation: an OpenAI-compatible HTTP client.
+That covers local servers (MLX by default, plus Ollama and vLLM) and hosted APIs. A
+provider-specific SDK integration is left out deliberately until there is a key to test it
+with; untested integrations are not shipped.
+
+The default generator, grader and judge is a local 3B model, chosen so the whole system
+runs free and offline on an 8 GB M1. Every generation metric is therefore reported
+together with the model that produced it, and strategies are compared under the same
+generator and judge.
+
 ## Deployment
 
 `docker compose up` starts `pgvector/pgvector:pg16` and the API. The API container runs the

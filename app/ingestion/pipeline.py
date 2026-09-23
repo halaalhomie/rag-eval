@@ -37,6 +37,26 @@ class DocumentEmbedder(Protocol):
     def embed_documents(self, texts: Sequence[str]) -> list[list[float]]: ...
 
 
+# Document-level metadata copied onto every chunk so retrieval can filter on chunks alone.
+CHUNK_METADATA_KEYS = ("title", "url", "doc_category", "corpus")
+
+
+def embedding_input(title: str | None, section: str | None, text: str) -> str:
+    """Text actually sent to the embedder when EMBEDDING_INCLUDE_CONTEXT is on."""
+    context = " > ".join(part for part in (title, section) if part)
+    return f"{context}\n\n{text}" if context else text
+
+
+def _truncated_inputs(embedder: DocumentEmbedder, inputs: list[str]) -> set[int]:
+    """Indices of inputs longer than the embedder's max sequence length, when the embedder
+    exposes its tokenizer (fakes and remote embedders may not)."""
+    count = getattr(embedder, "token_count", None)
+    limit = getattr(embedder, "max_seq_length", None)
+    if count is None or limit is None:
+        return set()
+    return {i for i, text in enumerate(inputs) if count(text) > limit}
+
+
 def document_id_for(source: str) -> str:
     return "doc_" + hashlib.sha256(source.strip().encode()).hexdigest()[:16]
 
@@ -80,7 +100,8 @@ class IngestionPipeline:
 
     def _fingerprint(self, text_hash: str) -> str:
         model = self.embedder.model_name if self.embedder else "none"
-        raw = f"{text_hash}|{self.chunker.fingerprint()}|{model}"
+        ctx = self.settings.embedding.embedding_include_context
+        raw = f"{text_hash}|{self.chunker.fingerprint()}|{model}|ctx={ctx}"
         return hashlib.sha256(raw.encode()).hexdigest()[:24]
 
     def ingest_document(self, session: Session, doc: LoadedDocument) -> IngestResult:
@@ -93,11 +114,29 @@ class IngestionPipeline:
             return IngestResult(doc.source, doc_id, "unchanged")
 
         parents, children = self.chunker.chunk(doc)
+        sections = [section_at(doc.sections, c.start) for c in children]
+        labels = [
+            (sec.label if sec else None) or parents[c.parent_index].section
+            for sec, c in zip(sections, children, strict=True)
+        ]
         embeddings: list[list[float]] | None = None
+        truncated: set[int] = set()
         if self.embedder is not None and children:
-            embeddings = self.embedder.embed_documents(
-                [doc.text[c.start : c.end] for c in children]
-            )
+            use_ctx = self.settings.embedding.embedding_include_context
+            inputs = [
+                embedding_input(doc.name, label, doc.text[c.start : c.end])
+                if use_ctx
+                else doc.text[c.start : c.end]
+                for c, label in zip(children, labels, strict=True)
+            ]
+            embeddings = self.embedder.embed_documents(inputs)
+            truncated = _truncated_inputs(self.embedder, inputs)
+            if truncated:
+                logger.warning(
+                    "%s: %d chunk(s) exceed the embedder's input limit and were truncated",
+                    doc.source,
+                    len(truncated),
+                )
 
         metadata = {
             **doc.metadata,
@@ -141,17 +180,17 @@ class IngestionPipeline:
         )
         session.flush()
 
-        base_meta = {k: doc.metadata[k] for k in ("title", "url") if k in doc.metadata}
+        base_meta = {k: doc.metadata[k] for k in CHUNK_METADATA_KEYS if k in doc.metadata}
         rows = []
         for j, c in enumerate(children):
-            sec = section_at(doc.sections, c.start)
+            sec = sections[j]
             rows.append(
                 Chunk(
                     id=f"{doc_id}:c{j}",
                     document_id=doc_id,
                     parent_id=parent_ids[c.parent_index],
                     ordinal=j,
-                    section=(sec.label if sec else None) or parents[c.parent_index].section,
+                    section=labels[j],
                     page=sec.page if sec else parents[c.parent_index].page,
                     start_char=c.start,
                     end_char=c.end,
@@ -159,7 +198,11 @@ class IngestionPipeline:
                     text=doc.text[c.start : c.end],
                     embedding=embeddings[j] if embeddings else None,
                     embedding_model=self.embedder.model_name if embeddings else None,
-                    metadata_={**base_meta, "source_type": doc.source_type},
+                    metadata_={
+                        **base_meta,
+                        "source_type": doc.source_type,
+                        **({"embedding_truncated": True} if j in truncated else {}),
+                    },
                 )
             )
         session.add_all(rows)

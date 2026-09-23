@@ -113,10 +113,12 @@ def test_oversized_paragraph_and_giant_token_respect_size_limits():
     assert sum(c.end - c.start for c in giant) == len(giant_word)
 
 
-def test_long_runs_count_as_multiple_tokens():
+def test_estimator_costs_long_mixed_and_camelcase_runs():
     assert estimate_tokens("pod") == 1
-    assert estimate_tokens("a" * 25) == 3
-    assert estimate_tokens("kube-apiserver --v=2") == 8
+    assert estimate_tokens("a" * 22) == 4  # 1 token per ~7 chars
+    assert estimate_tokens("4dccb216c4adb") == 7  # hex IDs split finely in WordPiece
+    assert estimate_tokens("PodDisruptionBudget") == 4  # Pod + Disruption(2) + Budget
+    assert estimate_tokens("kube-apiserver --v=2") == 9  # "apiserver" > 7 chars: 2 tokens
 
 
 def test_pdf_pages_are_never_merged_into_one_parent():

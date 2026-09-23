@@ -14,7 +14,7 @@ from app.config.settings import (
 
 def test_defaults_are_valid_and_match_documented_values():
     s = Settings()
-    assert s.retrieval.rag_strategy is RagStrategy.ADAPTIVE
+    assert s.retrieval.rag_strategy is RagStrategy.BASELINE
     assert s.retrieval.top_k == 10
     assert s.retrieval.rerank_top_k == 5
     assert s.retrieval.fusion_method is FusionMethod.RRF
@@ -84,10 +84,17 @@ def test_langfuse_enabled_without_keys_is_rejected():
 
 
 def test_api_key_checked_lazily_and_empty_string_counts_as_missing():
-    llm = LLMSettings(llm_provider=LLMProvider.ANTHROPIC, anthropic_api_key="  ")
-    with pytest.raises(ValueError, match="ANTHROPIC_API_KEY"):
+    llm = LLMSettings(
+        llm_provider=LLMProvider.OPENAI_COMPATIBLE, openai_api_key="  ", openai_base_url=None
+    )
+    with pytest.raises(ValueError, match="OPENAI_API_KEY"):
         llm.require_api_key()
     assert LLMSettings(llm_provider=LLMProvider.FAKE).require_api_key() is None
+
+
+def test_pricing_parsed_from_json_env(monkeypatch):
+    monkeypatch.setenv("LLM_PRICING", '{"gpt-x": [0.15, 0.6]}')
+    assert LLMSettings().llm_pricing == {"gpt-x": (0.15, 0.6)}
 
 
 def test_openai_compatible_accepts_base_url_without_key():
@@ -98,7 +105,7 @@ def test_openai_compatible_accepts_base_url_without_key():
 
 
 def test_snapshot_excludes_secrets(monkeypatch):
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-secret-value")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-secret-value")
     monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://u:hunter2@h/db")
     snap = Settings().snapshot()
     flat = repr(snap)

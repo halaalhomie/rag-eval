@@ -23,6 +23,11 @@ services:
     environment:
       # Inside the compose network the database host is the service name.
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-ragforge}:${POSTGRES_PASSWORD:-ragforge}@postgres:5432/${POSTGRES_DB:-ragforge}
+      # The local LLM server (MLX) runs on the host, not in a container: MLX needs the
+      # Apple GPU, which containers cannot access. Override to use a hosted endpoint.
+      OPENAI_BASE_URL: ${DOCKER_OPENAI_BASE_URL:-http://host.docker.internal:8080/v1}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # needed on Linux; built in on Docker Desktop
     ports:
       - "${API_HOST_PORT:-8000}:8000"
     volumes:

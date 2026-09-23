@@ -38,7 +38,7 @@ nothing is rewritten. This matters for three reasons:
    dataset.
 2. **Citations are exact.** A cited chunk can be highlighted in its source document.
 3. **It can be verified mechanically.** On the current corpus, the check
-   `substring(content, start, len) = text` returns 0 mismatches across all 3,062 chunks.
+   `substring(content, start, len) = text` returns 0 mismatches across all 3,855 chunks.
 
 ## Supported formats
 
@@ -59,7 +59,7 @@ commits in its own transaction.
 ## Chunking
 
 Sizes are in *approximate* tokens (see [Token estimation](#token-estimation)). The
-defaults are `CHILD_CHUNK_SIZE=400`, `CHILD_CHUNK_OVERLAP=60` and
+defaults are `CHILD_CHUNK_SIZE=360`, `CHILD_CHUNK_OVERLAP=60` and
 `PARENT_CHUNK_SIZE=1600`.
 
 ### Units
@@ -93,7 +93,8 @@ records the labels of all the sections it contains.
 across top-level (H2) sections, to keep parents topically tight. Kubernetes pages have many
 short H2 sections, so **50.1% of children were identical to their parent**, and
 parent-child retrieval would have added no context for them. After allowing merges across
-H2 boundaries, that figure is **8.0%** and the median parent is 3.8× its child.
+H2 boundaries, it dropped to **8.0%** (6.3% with the current defaults) and the median parent
+is 3.8× its child.
 
 ### Children
 
@@ -111,17 +112,57 @@ Each document stores a fingerprint of:
 - the chunker version and configuration
 - the embedding model
 
-Re-running ingestion with nothing changed is a no-op (`unchanged`). Changing any chunking
-setting, or bumping `CHUNKER_VERSION`, rebuilds only the affected documents' chunks.
+- whether embedding inputs include the title and section path
+
+Re-running ingestion with nothing changed is a no-op (`unchanged`). Changing any of these,
+or bumping `CHUNKER_VERSION`, rebuilds only the affected documents' chunks.
+
+### Embedding input
+
+With `EMBEDDING_INCLUDE_CONTEXT=true` (the default), each chunk is embedded as
+`"<title> > <section>\n\n<text>"`. The stored chunk text is unchanged. Many chunks are
+ambiguous out of context ("Set the field to `true` to ..."), and the heading path says
+which object and page they are about. Whether this helps retrieval is benchmarkable by
+toggling the flag and re-ingesting.
+
+When the embedder exposes its tokenizer, the pipeline also checks every embedding input
+against the model's `max_seq_length`. Any input over the limit is logged and flagged with
+`embedding_truncated: true` in the chunk metadata, so truncation is visible instead of
+silent.
 
 ### Token estimation
 
-`estimate_tokens` counts word and punctuation pieces, with long runs counted as
-`1 + (len - 1) // 10` tokens. It is model-independent on purpose, so changing the
-embedding model does not move chunk boundaries. Counting long runs matters because a naive
-count treats a 5,000-character identifier or base64 string as a single token. Chunks like
-that would exceed the embedder's input limit and be silently truncated. How far this proxy
-drifts from the real embedding tokenizer is measured in phase 3.
+`estimate_tokens` is a model-independent heuristic, so changing the embedding model does
+not move chunk boundaries. It is calibrated against a real tokenizer instead of assumed.
+`scripts/audit_chunk_tokens.py` compares it with bge-small's WordPiece tokenizer on every
+stored chunk and counts embedding inputs over the model's 512-token limit.
+
+The first version counted each word as one token (long runs as `len // 10`). The audit
+showed it undercounted:
+
+| | Naive estimator, 400-token chunks | Calibrated estimator, 360-token chunks |
+|---|---:|---:|
+| Estimate / actual (median) | 0.87 | **0.98** |
+| Estimate / actual (5th / 95th percentile) | 0.77 / 0.96 | 0.86 / 1.09 |
+| Worst underestimate | 0.43 | 0.70 |
+| Largest embedding input (real tokens) | 746 | **491** |
+| Embedding inputs **truncated** by the embedder | **123 of 3,062 (4%)** | **0 of 3,855** |
+
+The worst cases were hex container IDs in `crictl` output, wide Markdown tables, and long
+CamelCase feature-gate names, all of which WordPiece splits into many pieces. The
+calibrated rules are:
+
+- word pieces cost 1 token per ~7 characters
+- pieces mixing letters and digits cost 1 per ~2 characters
+- CamelCase identifiers are costed per component
+
+The child size dropped to 360 to leave headroom for the worst case plus the
+`Title > Section` prefix.
+
+Overestimates are rarer and harmless: only 4 chunks are overestimated by more than 1.5×.
+The extreme case (119×) is a base64 certificate blob. WordPiece maps any "word" longer than
+100 characters to a single `[UNK]` token, so its real count is 3. Overestimating only
+produces slightly smaller chunks.
 
 ## Kubernetes corpus
 
@@ -138,18 +179,21 @@ python scripts/fetch_corpus.py             # shallow sparse checkout -> data/raw
 python scripts/ingest.py --corpus kubernetes
 ```
 
-Current ingest, with default chunking and no embeddings yet:
+Current ingest, with default settings:
 
 | Category | Documents | Child chunks | Avg child tokens |
 |---|---:|---:|---:|
-| concepts | 185 | 1,628 | 323 |
-| tasks | 204 | 1,271 | 323 |
-| reference (glossary) | 162 | 163 | 87 |
-| **Total** | **551** | **3,062** | |
+| concepts | 185 | 2,099 | 289 |
+| tasks | 204 | 1,593 | 292 |
+| reference (glossary) | 162 | 163 | 101 |
+| **Total** | **551** | **3,855** | |
 
-There are 947 parent chunks, with a median of 1,093 tokens. Nineteen `_index.md` listing
-pages contain no prose and are skipped. A full ingest takes about 5 s; a no-op re-run takes
-about 1.6 s.
+There are 1,044 parent chunks, with a median of 1,126 tokens. Nineteen `_index.md` listing
+pages contain no prose and are skipped.
+
+Timing on an M1 with 8 GB RAM: chunking alone takes about 5 s. Chunking plus embedding all
+3,855 chunks with bge-small takes about 2.7 min on MPS (`EMBEDDING_DEVICE=mps`) or about
+4 min on CPU. A no-op re-run takes about 1.6 s.
 
 ### Hugo shortcode handling
 
@@ -170,7 +214,7 @@ approximates what a reader sees:
 | `comment`, `mermaid` blocks | removed with their content |
 | anything else | tag stripped, inner content kept; the name is logged |
 
-After ingestion, **0 of 3,062 chunks contain shortcode syntax**, and no shortcode names go
+After ingestion, **0 of 3,855 chunks contain shortcode syntax**, and no shortcode names go
 unhandled.
 
 ## Limitations

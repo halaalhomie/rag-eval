@@ -46,8 +46,9 @@ class FusionMethod(StrEnum):
 
 
 class LLMProvider(StrEnum):
-    ANTHROPIC = "anthropic"
-    OPENAI_COMPATIBLE = "openai_compatible"  # OpenAI, vLLM, Ollama, etc.
+    # Any server speaking the OpenAI chat-completions API: local MLX / Ollama / vLLM, or
+    # hosted OpenAI, Groq, Gemini, Hugging Face Inference Providers.
+    OPENAI_COMPATIBLE = "openai_compatible"
     FAKE = "fake"  # deterministic, for tests and offline development
 
 
@@ -92,13 +93,18 @@ class EmbeddingSettings(BaseSettings):
     # BGE models expect an instruction prefix on queries (not on passages).
     embedding_query_prefix: str = "Represent this sentence for searching relevant passages: "
     embedding_device: str = "cpu"
+    # Prepend "Title > Section" to each chunk's embedding input (not to the stored text).
+    # Chunks are often ambiguous out of context ("Set the field to true ...").
+    embedding_include_context: bool = True
 
 
 class ChunkingSettings(BaseSettings):
     model_config = _BASE_CONFIG
 
     # Child chunks are what gets indexed; parents are what can be sent to the LLM.
-    child_chunk_size: int = Field(default=400, ge=50, le=4000, description="tokens (approx)")
+    # 360 leaves headroom under a 512-token embedder limit for the estimator's worst case
+    # plus the "Title > Section" prefix (measured by scripts/audit_chunk_tokens.py).
+    child_chunk_size: int = Field(default=360, ge=50, le=4000, description="tokens (approx)")
     child_chunk_overlap: int = Field(default=60, ge=0, le=1000)
     parent_chunk_size: int = Field(default=1600, ge=100, le=16000)
 
@@ -114,7 +120,9 @@ class ChunkingSettings(BaseSettings):
 class RetrievalSettings(BaseSettings):
     model_config = _BASE_CONFIG
 
-    rag_strategy: RagStrategy = RagStrategy.ADAPTIVE
+    # Becomes ADAPTIVE once the adaptive strategy exists; until then the default must be
+    # a strategy that is actually implemented.
+    rag_strategy: RagStrategy = RagStrategy.BASELINE
     top_k: int = Field(default=10, ge=1, le=200, description="final contexts passed on")
     similarity_metric: SimilarityMetric = SimilarityMetric.COSINE
 
@@ -163,20 +171,28 @@ class AdaptiveSettings(BaseSettings):
 class LLMSettings(BaseSettings):
     model_config = _BASE_CONFIG
 
-    llm_provider: LLMProvider = LLMProvider.ANTHROPIC
-    llm_model: str = "claude-sonnet-5"
-    # Cheaper model for high-volume structured calls (grading, classification, claims).
-    llm_fast_model: str = "claude-haiku-4-5-20251001"
-    # Kept separate so the judge can differ from the generator (reduces self-preference bias).
-    judge_model: str = "claude-sonnet-5"
+    llm_provider: LLMProvider = LLMProvider.OPENAI_COMPATIBLE
+    # Default: a local MLX server (see README). Any OpenAI-compatible endpoint works.
+    openai_base_url: str | None = "http://localhost:8080/v1"
+    openai_api_key: SecretStr | None = None
+    llm_model: str = "mlx-community/Qwen2.5-3B-Instruct-4bit"
+    # Model for high-volume structured calls (grading, classification, claims).
+    llm_fast_model: str = "mlx-community/Qwen2.5-3B-Instruct-4bit"
+    # Separate setting so the judge can differ from the generator (self-preference bias).
+    # It must stay fixed across experiments that are compared with each other.
+    judge_model: str = "mlx-community/Qwen2.5-3B-Instruct-4bit"
     llm_temperature: float = Field(default=0.0, ge=0.0, le=2.0)
     llm_max_tokens: int = Field(default=1024, ge=16, le=32000)
-    llm_timeout_s: float = Field(default=60.0, gt=0, le=600)
+    llm_timeout_s: float = Field(default=120.0, gt=0, le=600)
     llm_max_retries: int = Field(default=3, ge=0, le=10)
-
-    anthropic_api_key: SecretStr | None = None
-    openai_api_key: SecretStr | None = None
-    openai_base_url: str | None = None
+    # USD per 1M tokens as {"model": [input, output]}, e.g.
+    #   LLM_PRICING='{"my-hosted-model": [0.50, 1.50]}'
+    # Models missing here are reported as "unpriced" rather than silently costing $0,
+    # except local models listed in LLM_LOCAL_MODELS, which genuinely cost $0 per token.
+    llm_pricing: dict[str, tuple[float, float]] = Field(default_factory=dict)
+    llm_local_models: set[str] = Field(
+        default_factory=lambda: {"mlx-community/Qwen2.5-3B-Instruct-4bit"}
+    )
 
     def require_api_key(self) -> SecretStr | None:
         """Called when a provider client is built, not at import time, so tests and
@@ -185,8 +201,6 @@ class LLMSettings(BaseSettings):
         def missing(key: SecretStr | None) -> bool:  # `KEY=` in .env parses as ""
             return key is None or not key.get_secret_value().strip()
 
-        if self.llm_provider is LLMProvider.ANTHROPIC and missing(self.anthropic_api_key):
-            raise ValueError("LLM_PROVIDER=anthropic requires ANTHROPIC_API_KEY")
         if (
             self.llm_provider is LLMProvider.OPENAI_COMPATIBLE
             and missing(self.openai_api_key)
@@ -195,9 +209,7 @@ class LLMSettings(BaseSettings):
             raise ValueError(
                 "LLM_PROVIDER=openai_compatible requires OPENAI_API_KEY or OPENAI_BASE_URL"
             )
-        if self.llm_provider is LLMProvider.ANTHROPIC:
-            return self.anthropic_api_key
-        return self.openai_api_key
+        return None if missing(self.openai_api_key) else self.openai_api_key
 
 
 class ObservabilitySettings(BaseSettings):
@@ -239,7 +251,7 @@ class Settings(BaseSettings):
             mode="json",
             exclude={
                 "database": {"database_url"},
-                "llm": {"anthropic_api_key", "openai_api_key"},
+                "llm": {"openai_api_key"},
                 "observability": {"langfuse_public_key", "langfuse_secret_key"},
             },
         )

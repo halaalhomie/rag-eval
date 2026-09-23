@@ -36,7 +36,7 @@ from app.ingestion.markdown import iter_lines, parse_heading
 from app.ingestion.tokens import estimate_tokens
 from app.ingestion.types import ChildSpan, LoadedDocument, ParentSpan, Section, Span
 
-CHUNKER_VERSION = "structure-aware-v4"
+CHUNKER_VERSION = "structure-aware-v5"
 
 # Source Markdown is hard-wrapped, so a bare newline is NOT a sentence boundary. Split after
 # terminal punctuation, after a line-ending colon, or before a list item.

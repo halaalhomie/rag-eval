@@ -23,7 +23,7 @@ def test_health_ok_when_db_and_pgvector_available():
     body = resp.json()
     assert body["status"] == "ok"
     assert body["components"]["database"]["status"] == "ok"
-    assert body["rag_strategy"] == "adaptive"
+    assert body["rag_strategy"] == "baseline"
 
 
 def test_health_degraded_when_pgvector_missing():

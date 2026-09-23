@@ -48,7 +48,7 @@ config validation.
 |---|---|---|
 | 1 | Repository, configuration, Docker, DB schema, `/health` | done |
 | 2 | Document ingestion (MD/TXT/PDF), structure-aware parent/child chunking, Kubernetes corpus | done |
-| 3 | Baseline dense RAG | planned |
+| 3 | Baseline dense RAG: local embeddings, pgvector search, LLM provider layer, cited answers | done |
 | 4 | Evaluation dataset + retrieval metrics | planned |
 | 5–8 | BM25, hybrid (RRF), reranking, parent-child | planned |
 | 9–12 | Query rewriting, Corrective RAG, Self-RAG-inspired loop, claim verification | planned |
@@ -68,7 +68,7 @@ It suits RAG evaluation because it includes:
 - multi-hop questions (e.g. Deployment → ReplicaSet → Pod)
 - comparisons (StatefulSet vs Deployment)
 
-Current ingest: 551 documents, 947 parent chunks and 3,062 child chunks. See
+Current ingest: 551 documents, 1,044 parent chunks and 3,855 embedded child chunks. See
 [docs/ingestion.md](docs/ingestion.md) for chunking design, measurements and limitations.
 
 ## Benchmark results
@@ -91,18 +91,30 @@ No experiments have been run yet. All values stay **TBD** until they are produce
 Prerequisites: Docker, and Python 3.12+ for local development.
 
 ```bash
-cp .env.example .env            # then set ANTHROPIC_API_KEY (or another provider)
+cp .env.example .env            # defaults work as-is with the local LLM below
 
 # Full stack: PostgreSQL + pgvector and the API (schema is initialized on startup)
 docker compose up -d --build
 curl localhost:8000/health
 ```
 
-Fetch and ingest the corpus:
+Start the local LLM (Apple Silicon; free and offline). It runs on the host because MLX
+needs the Apple GPU, and the API container reaches it via `host.docker.internal`:
+
+```bash
+pip install -e ".[local-llm]"
+mlx_lm.server --model mlx-community/Qwen2.5-3B-Instruct-4bit --port 8080
+```
+
+Any OpenAI-compatible endpoint works instead (Ollama, vLLM, OpenAI, Groq, Gemini): set
+`OPENAI_BASE_URL`, `LLM_MODEL` and, for hosted APIs, `OPENAI_API_KEY`. See
+[docs/generation.md](docs/generation.md).
+
+Fetch and ingest the corpus (ingestion embeds every chunk with the local embedder):
 
 ```bash
 python scripts/fetch_corpus.py                 # pinned sparse checkout into data/raw/
-python scripts/ingest.py --corpus kubernetes   # idempotent; re-runs skip unchanged docs
+EMBEDDING_DEVICE=mps python scripts/ingest.py --corpus kubernetes   # idempotent
 python scripts/ingest.py --path ./my-docs      # or any folder of .md / .txt / .pdf
 ```
 
@@ -135,6 +147,7 @@ Integration tests create and use a separate `ragforge_test` database.
 | `GET` | `/health` | database and pgvector status |
 | `POST` | `/documents/ingest` | multipart upload of `.md` / `.txt` / `.pdf` files (≤20 files, ≤20 MB each), with per-file status |
 | `GET` | `/documents` | list ingested documents with chunk counts and source URLs |
+| `POST` | `/query` | answer a question with citations, timings and token usage |
 
 ```bash
 curl -X POST localhost:8000/documents/ingest -F "files=@runbook.md" -F "files=@manual.pdf"
@@ -143,6 +156,31 @@ curl -X POST localhost:8000/documents/ingest -F "files=@runbook.md" -F "files=@m
 Each file succeeds or fails independently: unsupported types, corrupt PDFs and empty files
 are reported per file instead of failing the whole request.
 
+```bash
+curl -X POST localhost:8000/query -H 'content-type: application/json' \
+  -d '{"query": "What is the default termination grace period for a Pod?", "top_k": 5}'
+```
+
+Response from the running system (local Qwen 3B), abridged:
+
+```json
+{
+  "answer": "The default termination grace period for a Pod is 30 seconds [1].",
+  "abstained": false,
+  "sources": ["[1] Pod Lifecycle > Termination of Pods > Pod Termination Flow"],
+  "citations": [{"number": 1, "chunk_id": "doc_…:c…", "url": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/", "…": "…"}],
+  "retrieval_strategy": "baseline",
+  "retrieval_iterations": 1,
+  "evidence_score": null,
+  "faithfulness_score": null,
+  "timings": {"retrieval_s": 0.14, "generation_s": 19.13, "total_s": 19.27},
+  "usage": {"llm_calls": 1, "input_tokens": 1625, "output_tokens": 17, "estimated_cost_usd": 0.0}
+}
+```
+
+`evidence_score` and `faithfulness_score` stay `null` until the grading and verification
+phases. Unimplemented strategies return HTTP 501 instead of silently falling back.
+
 ## Configuration
 
 All tunables live in [app/config/settings.py](app/config/settings.py) and are validated at
@@ -150,13 +188,15 @@ startup. [.env.example](.env.example) documents every variable. Highlights:
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `RAG_STRATEGY` | `adaptive` | `baseline`, `dense`, `bm25`, `hybrid`, `hybrid_rerank`, `hybrid_rerank_rewrite`, `corrective`, `self_rag`, `adaptive` |
+| `RAG_STRATEGY` | `baseline` | `baseline`, `dense`, `bm25`, `hybrid`, `hybrid_rerank`, `hybrid_rerank_rewrite`, `corrective`, `self_rag`, `adaptive` |
 | `TOP_K` / `RERANK_TOP_K` | 10 / 5 | final context counts |
-| `CHILD_CHUNK_SIZE` / `CHILD_CHUNK_OVERLAP` / `PARENT_CHUNK_SIZE` | 400 / 60 / 1600 | chunking (approximate tokens) |
+| `CHILD_CHUNK_SIZE` / `CHILD_CHUNK_OVERLAP` / `PARENT_CHUNK_SIZE` | 360 / 60 / 1600 | chunking (calibrated approximate tokens) |
+| `EMBEDDING_MODEL` / `EMBEDDING_INCLUDE_CONTEXT` | `BAAI/bge-small-en-v1.5` / `true` | local embedder; embed chunks with their title and section path |
 | `DENSE_WEIGHT` / `BM25_WEIGHT` / `RRF_K` | 0.5 / 0.5 / 60 | fusion |
 | `RELEVANCE_THRESHOLD` / `EVIDENCE_THRESHOLD` | 0.65 / 0.70 | corrective and sufficiency gates |
 | `MAX_CORRECTIVE_ITERATIONS` / `MAX_SELF_RAG_ITERATIONS` | 2 / 2 | loop caps (validated ≤ 5) |
-| `LLM_PROVIDER` | `anthropic` | `anthropic`, `openai_compatible`, `fake` |
+| `LLM_PROVIDER` / `OPENAI_BASE_URL` / `LLM_MODEL` | `openai_compatible` / local MLX / Qwen2.5-3B-Instruct-4bit | any OpenAI-compatible endpoint, or `fake` |
+| `LLM_PRICING` | `{}` | USD per 1M tokens per model; unlisted non-local models are reported as unpriced |
 | `ENABLE_LANGFUSE` | `false` | tracing (keys are required when enabled) |
 
 Cross-field rules are enforced. For example, `RERANK_TOP_K ≤ RERANK_CANDIDATES ≤
@@ -170,9 +210,9 @@ app/
   config/         validated settings
   db/             SQLAlchemy models, session, schema init
   ingestion/      loaders, Hugo preprocessing, parent/child chunking, pipeline
-  retrieval/      dense, BM25, hybrid, reranker      (phases 3–8)
-  rag/            LangGraph pipeline, nodes, graders (phases 9–12)
-  generation/     LLM providers, answer generation   (phase 3)
+  retrieval/      retriever interface, embeddings, dense (pgvector); BM25/hybrid/rerank next
+  rag/            strategies (baseline), prompts; graph/graders in phases 9–12
+  generation/     LLM provider layer, structured output, citations, usage/cost
   evaluation/     datasets, metrics, experiments     (phase 4+)
   observability/  tracing                            (phase 13)
 scripts/          CLI entry points (init_db, ingest, eval, experiments)
@@ -185,3 +225,5 @@ data/             corpus manifest, raw corpus (gitignored), eval sets, experimen
 
 - [docs/architecture.md](docs/architecture.md): system design, data model, key decisions
 - [docs/ingestion.md](docs/ingestion.md): loaders, chunking algorithm, corpus, measurements
+- [docs/retrieval.md](docs/retrieval.md): retriever interface, dense retrieval, pgvector pitfalls
+- [docs/generation.md](docs/generation.md): LLM providers, local model, prompts, citations, baseline
