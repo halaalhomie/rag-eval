@@ -32,6 +32,7 @@ def test_document_parent_chunk_roundtrip_with_vector_search(pg_engine):
             source_type="markdown",
             content_hash="x",
             char_count=20,
+            content="hello world parent..",
         )
         parent = ParentChunk(
             id="doc-test:p0",

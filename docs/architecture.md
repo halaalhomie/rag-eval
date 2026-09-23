@@ -72,6 +72,7 @@ erDiagram
         string id PK "hash of normalized source"
         string source UK
         string content_hash
+        text content "normalized text; all offsets index into it"
     }
     parent_chunks {
         string id PK
@@ -103,6 +104,11 @@ the source document rather than to chunk IDs. If labels were chunk IDs, every ch
 experiment would invalidate the evaluation set. With spans, chunk relevance is recomputed
 for each experiment by overlap, which makes chunking itself a benchmarkable variable.
 
+**Full document text is stored.** `documents.content` holds the normalized text that every
+chunk offset points into. It roughly doubles text storage, which is trivial at this corpus
+size (about 4 MB). In return, evaluation can resolve evidence spans and recompute chunk
+relevance for any chunking configuration, without re-reading source files.
+
 **Deterministic document IDs.** IDs are derived from the normalized source path. This makes
 re-ingestion an idempotent upsert and keeps dataset references stable.
 
@@ -124,6 +130,13 @@ built from the `chunks` table, so the "BM25" row in the benchmarks really is BM2
 **Synchronous DB access.** The expensive operations (embedding, reranking, BM25 scoring)
 are CPU-bound, so async I/O would add complexity with little throughput benefit at this
 scale. FastAPI runs sync endpoints in a threadpool.
+
+## Ingestion
+
+See [ingestion.md](ingestion.md). In summary: loaders normalize text; a corpus-specific
+preprocessor (Hugo shortcodes for the Kubernetes docs) resolves template syntax; the
+structure-aware chunker emits parent and child *offsets*; the pipeline upserts idempotently,
+keyed on a fingerprint of content, chunker config and embedding model.
 
 ## Deployment
 

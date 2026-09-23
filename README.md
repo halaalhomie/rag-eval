@@ -47,12 +47,29 @@ config validation.
 | Phase | Component | Status |
 |---|---|---|
 | 1 | Repository, configuration, Docker, DB schema, `/health` | done |
-| 2 | Document ingestion + chunking | planned |
+| 2 | Document ingestion (MD/TXT/PDF), structure-aware parent/child chunking, Kubernetes corpus | done |
 | 3 | Baseline dense RAG | planned |
 | 4 | Evaluation dataset + retrieval metrics | planned |
 | 5–8 | BM25, hybrid (RRF), reranking, parent-child | planned |
 | 9–12 | Query rewriting, Corrective RAG, Self-RAG-inspired loop, claim verification | planned |
 | 13–18 | Observability, experiment runner, benchmarks, docs, deployment | planned |
+
+## Corpus
+
+The evaluation corpus is the **Kubernetes documentation** (`concepts/`, `tasks/` and the
+glossary from [kubernetes/website](https://github.com/kubernetes/website)). It is pinned
+to commit `5dd61e1` (docs v1.37) and licensed
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), © The Kubernetes Authors.
+It suits RAG evaluation because it includes:
+
+- factual lookups (defaults, field names)
+- keyword-heavy queries (flags, feature gates)
+- troubleshooting
+- multi-hop questions (e.g. Deployment → ReplicaSet → Pod)
+- comparisons (StatefulSet vs Deployment)
+
+Current ingest: 551 documents, 947 parent chunks and 3,062 child chunks. See
+[docs/ingestion.md](docs/ingestion.md) for chunking design, measurements and limitations.
 
 ## Benchmark results
 
@@ -81,6 +98,14 @@ docker compose up -d --build
 curl localhost:8000/health
 ```
 
+Fetch and ingest the corpus:
+
+```bash
+python scripts/fetch_corpus.py                 # pinned sparse checkout into data/raw/
+python scripts/ingest.py --corpus kubernetes   # idempotent; re-runs skip unchanged docs
+python scripts/ingest.py --path ./my-docs      # or any folder of .md / .txt / .pdf
+```
+
 Local development against the containerized database:
 
 ```bash
@@ -103,6 +128,21 @@ pytest -m "not integration"
 
 Integration tests create and use a separate `ragforge_test` database.
 
+## API
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/health` | database and pgvector status |
+| `POST` | `/documents/ingest` | multipart upload of `.md` / `.txt` / `.pdf` files (≤20 files, ≤20 MB each), with per-file status |
+| `GET` | `/documents` | list ingested documents with chunk counts and source URLs |
+
+```bash
+curl -X POST localhost:8000/documents/ingest -F "files=@runbook.md" -F "files=@manual.pdf"
+```
+
+Each file succeeds or fails independently: unsupported types, corrupt PDFs and empty files
+are reported per file instead of failing the whole request.
+
 ## Configuration
 
 All tunables live in [app/config/settings.py](app/config/settings.py) and are validated at
@@ -112,6 +152,7 @@ startup. [.env.example](.env.example) documents every variable. Highlights:
 |---|---|---|
 | `RAG_STRATEGY` | `adaptive` | `baseline`, `dense`, `bm25`, `hybrid`, `hybrid_rerank`, `hybrid_rerank_rewrite`, `corrective`, `self_rag`, `adaptive` |
 | `TOP_K` / `RERANK_TOP_K` | 10 / 5 | final context counts |
+| `CHILD_CHUNK_SIZE` / `CHILD_CHUNK_OVERLAP` / `PARENT_CHUNK_SIZE` | 400 / 60 / 1600 | chunking (approximate tokens) |
 | `DENSE_WEIGHT` / `BM25_WEIGHT` / `RRF_K` | 0.5 / 0.5 / 60 | fusion |
 | `RELEVANCE_THRESHOLD` / `EVIDENCE_THRESHOLD` | 0.65 / 0.70 | corrective and sufficiency gates |
 | `MAX_CORRECTIVE_ITERATIONS` / `MAX_SELF_RAG_ITERATIONS` | 2 / 2 | loop caps (validated ≤ 5) |
@@ -128,7 +169,7 @@ app/
   api/            FastAPI routes
   config/         validated settings
   db/             SQLAlchemy models, session, schema init
-  ingestion/      loaders + chunking                (phase 2)
+  ingestion/      loaders, Hugo preprocessing, parent/child chunking, pipeline
   retrieval/      dense, BM25, hybrid, reranker      (phases 3–8)
   rag/            LangGraph pipeline, nodes, graders (phases 9–12)
   generation/     LLM providers, answer generation   (phase 3)
@@ -137,9 +178,10 @@ app/
 scripts/          CLI entry points (init_db, ingest, eval, experiments)
 tests/            unit / integration / evaluation
 docs/             technical documentation
-data/             raw corpus (gitignored), eval sets, experiment outputs
+data/             corpus manifest, raw corpus (gitignored), eval sets, experiment outputs
 ```
 
 ## Documentation
 
 - [docs/architecture.md](docs/architecture.md): system design, data model, key decisions
+- [docs/ingestion.md](docs/ingestion.md): loaders, chunking algorithm, corpus, measurements

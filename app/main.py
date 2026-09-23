@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-from app.api.routes import health
+from app.api.routes import documents, health
 from app.config import get_settings
 from app.utils.logging import configure_logging
 
@@ -18,6 +18,7 @@ def create_app() -> FastAPI:
         version="0.1.0",
     )
     app.include_router(health.router)
+    app.include_router(documents.router)
     return app
 
 

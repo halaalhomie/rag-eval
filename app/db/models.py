@@ -54,6 +54,9 @@ class Document(TimestampMixin, Base):
     source_type: Mapped[str] = mapped_column(String(16))  # pdf | markdown | txt
     content_hash: Mapped[str] = mapped_column(String(64))
     char_count: Mapped[int] = mapped_column(Integer)
+    # Full normalized text. All chunk offsets index into it, and evaluation uses it to
+    # resolve evidence spans independently of any particular chunking.
+    content: Mapped[str] = mapped_column(Text)
     metadata_: Mapped[dict[str, Any]] = mapped_column("metadata", default=dict)
 
     parents: Mapped[list[ParentChunk]] = relationship(

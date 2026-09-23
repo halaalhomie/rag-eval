@@ -1,0 +1,2866 @@
+{
+ "corpus": "kubernetes",
+ "repository": "https://github.com/kubernetes/website.git",
+ "commit": "5dd61e17b222c0220281657b843a3e15c86b3cfe",
+ "docs_version": "1.37",
+ "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+ "attribution": "Kubernetes Documentation, The Kubernetes Authors",
+ "subpaths": [
+  "content/en/docs/concepts",
+  "content/en/docs/tasks",
+  "content/en/docs/reference/glossary"
+ ],
+ "file_count": 570,
+ "files": [
+  {
+   "source": "kubernetes/concepts/_index.md",
+   "sha256": "a66749dd03ad9aa4270e07f3c5e739cce901e7bc97421582773205042c23a7a4",
+   "bytes": 384
+  },
+  {
+   "source": "kubernetes/concepts/architecture/_index.md",
+   "sha256": "0fd1fc2f5ff1e715c5ef99bfd040803f75ec17807c35c863c2b6890620cc3d10",
+   "bytes": 10086
+  },
+  {
+   "source": "kubernetes/concepts/architecture/cgroups.md",
+   "sha256": "46ca542560d9b0ec79885dbdf354bb664005de777ab6a3ee39118540f9db9cfb",
+   "bytes": 6947
+  },
+  {
+   "source": "kubernetes/concepts/architecture/cloud-controller.md",
+   "sha256": "514f38ce85a79de7fed7b1478d1ec370999a64cb708638b214419178583cf9d1",
+   "bytes": 6697
+  },
+  {
+   "source": "kubernetes/concepts/architecture/control-plane-node-communication.md",
+   "sha256": "7f648da2a79973d7fe0599048d13fabfa9d1d8754d14e3cf89ea238aab3ca9da",
+   "bytes": 7068
+  },
+  {
+   "source": "kubernetes/concepts/architecture/controller.md",
+   "sha256": "dc74e2d9f6debb9e903bed3041b132534ed757fff0fd54677f502c80a987f323",
+   "bytes": 7288
+  },
+  {
+   "source": "kubernetes/concepts/architecture/garbage-collection.md",
+   "sha256": "7a1a91dd737fa178e270f1178339951a98783d8deaf0865a76cb11f83bce81a2",
+   "bytes": 10747
+  },
+  {
+   "source": "kubernetes/concepts/architecture/leases.md",
+   "sha256": "a23f1a9920505c3916071c7cbe5325f504c0381a97d527d4dec4ec962c3f2f46",
+   "bytes": 5950
+  },
+  {
+   "source": "kubernetes/concepts/architecture/mixed-version-proxy.md",
+   "sha256": "2f845826605d57975070ff49a29069b2e66cb4cd985d593d986af19d1b36befd",
+   "bytes": 7111
+  },
+  {
+   "source": "kubernetes/concepts/architecture/nodes.md",
+   "sha256": "a30bae59d3269ce8a42a85fd89b3e57d0595656660e18eccec90b6e7873be5ac",
+   "bytes": 14884
+  },
+  {
+   "source": "kubernetes/concepts/architecture/self-healing.md",
+   "sha256": "ebbf5832b4bb55d727055f7e6da52d310f71d1a47b304b97c0ff3ac9f6662e2d",
+   "bytes": 2905
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/_index.md",
+   "sha256": "b76ea992ac2cf66c14b8341b0c0f707ce519a81ce88086e2544cafb5fc0b7e91",
+   "bytes": 4532
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/addons.md",
+   "sha256": "00ca113e3b15e6457666a4ff5ad0bb9537085ff1ee3acf294ac67117940f4cb7",
+   "bytes": 7607
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/admission-webhooks-good-practices.md",
+   "sha256": "845cd4832e3a30a5673e2a1a98c35ec2d47798895603f81536771c4263acc7a7",
+   "bytes": 30597
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/certificates.md",
+   "sha256": "26b890d417b8117495dab509d93d52dcaae0f4eda726c53417fe39ecd207c2ab",
+   "bytes": 203
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/compatibility-version.md",
+   "sha256": "8daed9825190932b27a7f08b83e4e5b0d81dec1a638043f2087d0cce3e4b3fa2",
+   "bytes": 1308
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/coordinated-leader-election.md",
+   "sha256": "fc6cc599d775a70e5fe9272cec4547b14c43e8378adb1a88ff6f594173c8c45e",
+   "bytes": 5181
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/dra.md",
+   "sha256": "8edf4adf402835a7495b977937a384fdfd90643cbf464db38585254b75aaef19",
+   "bytes": 10543
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/flow-control.md",
+   "sha256": "e7577bbfd75d6cb77cc5b3877534d5ee21ab05bffc31d01b6413958448ec6e39",
+   "bytes": 42566
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/kube-state-metrics.md",
+   "sha256": "60dd87a9ed4c861448432a8e9c88fae4dac20af78cbb55d7ade0d3d751a61cff",
+   "bytes": 2543
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/logging.md",
+   "sha256": "4bdb32d8092f2dc70cd951ce64a82386f6fb4561dc9637e73a1ec8aa4afaca5b",
+   "bytes": 17339
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/networking.md",
+   "sha256": "f6085aaac22294a4409875bfd2f09f2664bad82adc91b9fffa369ae5a7d25d93",
+   "bytes": 4493
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/node-autoscaling.md",
+   "sha256": "ddea5ba295a319bf0889c924b729f3948a6723b454dbf2d2b3ff77b7c3cd148f",
+   "bytes": 15376
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/node-shutdown.md",
+   "sha256": "f3a10b72e07a7ac6a175803198aa3db6621b703f0f17074cc5f8d1ec6425dc79",
+   "bytes": 15816
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/observability.md",
+   "sha256": "d553e138441c14e2f7f39574d412bb00f712b8ad404889a0009b4c777169085d",
+   "bytes": 11508
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/proxies.md",
+   "sha256": "a0a589ab60dbdb6cabf5fc035dfa8259a10db12d5f5f67d9c5d22077b49af75e",
+   "bytes": 2331
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/swap-memory-management.md",
+   "sha256": "246d5ccea27f99a6b8b0dc722c28dac631d062130588d72c852bdb3b20c0aab2",
+   "bytes": 20509
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/system-logs.md",
+   "sha256": "8636940e405f1924fae684a8affba5b368686bd2e7722d0fd11797f1520f663f",
+   "bytes": 14833
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/system-metrics.md",
+   "sha256": "7e98cac900d078b0362d850d85256842147b89bebe77a8894a18a0ffa2c4d1a3",
+   "bytes": 15077
+  },
+  {
+   "source": "kubernetes/concepts/cluster-administration/system-traces.md",
+   "sha256": "0d1634dc8972f859f82b8dd34542913974166adde1bc9edc323049ae37ddec01",
+   "bytes": 6219
+  },
+  {
+   "source": "kubernetes/concepts/configuration/_index.md",
+   "sha256": "0cfae2d3de0c7e39879ebd2a0669c498376b76b0f01500a9f85f6621050d5228",
+   "bytes": 6118
+  },
+  {
+   "source": "kubernetes/concepts/configuration/configmap.md",
+   "sha256": "2e3860f6aeb7d86e6d2dd8f32493dbc1d52ce1c54606cb08455107b297a63a2a",
+   "bytes": 12932
+  },
+  {
+   "source": "kubernetes/concepts/configuration/manage-resources-containers.md",
+   "sha256": "cbb176ded47da163df33bcf0e643dc38361b19f6dc77a98302320704e20c95ac",
+   "bytes": 34575
+  },
+  {
+   "source": "kubernetes/concepts/configuration/organize-cluster-access-kubeconfig.md",
+   "sha256": "3af1a97b48276ddd35a31bbf24962c78c5ae939754fe038f5eec20abc7c8b843",
+   "bytes": 6900
+  },
+  {
+   "source": "kubernetes/concepts/configuration/secret.md",
+   "sha256": "30bb29e4040f1464a8cb299524f51e0a1ae2279a63f45b7182b1b8faf27af194",
+   "bytes": 32981
+  },
+  {
+   "source": "kubernetes/concepts/configuration/windows-resource-management.md",
+   "sha256": "537b822a1cbfb18d31c08ba2bd5b8812463b186896ba4bd8edaff3b7ef18075e",
+   "bytes": 3821
+  },
+  {
+   "source": "kubernetes/concepts/containers/_index.md",
+   "sha256": "f75a4bfbcea63c329925c288c1d28c864a0d537c3348cb620da749f040fe5832",
+   "bytes": 2247
+  },
+  {
+   "source": "kubernetes/concepts/containers/container-environment.md",
+   "sha256": "ac9d704dffa9d90b802c6a26d2a3f4d33dadea7f4f6a72df990e24b12557d7f4",
+   "bytes": 2215
+  },
+  {
+   "source": "kubernetes/concepts/containers/container-lifecycle-hooks.md",
+   "sha256": "c1c64cffc3086ce3ba19ab3178b8faaa01fcd8a09673e367db3458385b6b6e6a",
+   "bytes": 7844
+  },
+  {
+   "source": "kubernetes/concepts/containers/cri.md",
+   "sha256": "f974216aafbe49012ce581929a53f23a410eec508215d8798865b2f3e0cb467e",
+   "bytes": 2957
+  },
+  {
+   "source": "kubernetes/concepts/containers/images.md",
+   "sha256": "019267d271888ab7e9b505c748a5bd0b7f99029a2270fb08390f43f94d5ddf5e",
+   "bytes": 28900
+  },
+  {
+   "source": "kubernetes/concepts/containers/runtime-class.md",
+   "sha256": "335872d09f4274459fcf5c5458974ea460930769215c9ab56cddd296be9191c7",
+   "bytes": 7278
+  },
+  {
+   "source": "kubernetes/concepts/extend-kubernetes/_index.md",
+   "sha256": "f640d0162a8f9d6fb88ffc18b80da89a34db4066a1334003a305b804ae7ddbd5",
+   "bytes": 17991
+  },
+  {
+   "source": "kubernetes/concepts/extend-kubernetes/api-extension/_index.md",
+   "sha256": "691fa0a25a942a4fbdad20350ec9942b2f12f2e4a6a1d9f0836157a078132cd6",
+   "bytes": 1111
+  },
+  {
+   "source": "kubernetes/concepts/extend-kubernetes/api-extension/apiserver-aggregation.md",
+   "sha256": "e1d53d6a0ae67f6187e5a69d3662e6407c9a6d61d3e25cae52821688bac03a79",
+   "bytes": 2798
+  },
+  {
+   "source": "kubernetes/concepts/extend-kubernetes/api-extension/custom-resources.md",
+   "sha256": "dcaf029d1a2a9646514bfe564ea29be439cdc0d1e002747bda9acd546c61fa13",
+   "bytes": 21761
+  },
+  {
+   "source": "kubernetes/concepts/extend-kubernetes/compute-storage-net/_index.md",
+   "sha256": "c166449201af4162c9259878dd49ba379041ef29fed1e091c4cac3fb24b1caf5",
+   "bytes": 2338
+  },
+  {
+   "source": "kubernetes/concepts/extend-kubernetes/compute-storage-net/device-plugins.md",
+   "sha256": "b0c1472ed6bc8738a362a10ffeb05f025b9d8099bedca66499659a0219a9ad4f",
+   "bytes": 24108
+  },
+  {
+   "source": "kubernetes/concepts/extend-kubernetes/compute-storage-net/network-plugins.md",
+   "sha256": "9407931437553a408648c0a55be1b567f6a58c10ceabca3a08d096300ba7ecb1",
+   "bytes": 5809
+  },
+  {
+   "source": "kubernetes/concepts/extend-kubernetes/operator.md",
+   "sha256": "1ddb2aa884aa80a56ffacacaf9a4163541e18f2dc6095696d5219104c5bdce55",
+   "bytes": 6709
+  },
+  {
+   "source": "kubernetes/concepts/overview/_index.md",
+   "sha256": "4caf1cd3bfe590d9eb75d513d2024081338dc48523f81f9e06e3208e749f3c8c",
+   "bytes": 10503
+  },
+  {
+   "source": "kubernetes/concepts/overview/components.md",
+   "sha256": "18c5c61f4db074b6fc899b18047b4423e7a2404e43261868d2da6fadcf9688f0",
+   "bytes": 3334
+  },
+  {
+   "source": "kubernetes/concepts/overview/kubectl.md",
+   "sha256": "1d489c8032a9adec4050a3cba311188de3c8f8488460987425ced28cdc662085",
+   "bytes": 5462
+  },
+  {
+   "source": "kubernetes/concepts/overview/kubernetes-api.md",
+   "sha256": "12051903c398c11b0e126fa41081e11aadcabf0503b0d018b6778099bbb8ce8c",
+   "bytes": 15435
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/_index.md",
+   "sha256": "4a9ca9b6ebb446b11a251269e36eb858468ab8a708ce43c8f5eb4273206be0f2",
+   "bytes": 8495
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/annotations.md",
+   "sha256": "b835fbcd4881237276772d6b37f56e1d4607512a4ec15309db0cfb5fb87ce209",
+   "bytes": 4457
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/common-labels.md",
+   "sha256": "9876c9a31f185fb33b9115b84412f6e6160ac948370f92ac4275e2f556c877c3",
+   "bytes": 5960
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/field-selectors.md",
+   "sha256": "a310c967821096a57e7df51437775aca97d20e056a2b3a96da2b54ffe829bfdf",
+   "bytes": 6723
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/finalizers.md",
+   "sha256": "1ce812dc2b67333195fe1c337005dc191de7208bb11707638de44943a7723fc8",
+   "bytes": 5165
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/labels.md",
+   "sha256": "f1761665a0c702f80c256489e2778bfcb3055246a12c874fd86211183be838d4",
+   "bytes": 15513
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/names.md",
+   "sha256": "7219969224b4ba124fe5cce738c210f1942c4b65bf60b887f52601b24e0c18b0",
+   "bytes": 5110
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/namespaces.md",
+   "sha256": "165c4da414c735795f7c274cf2fcd7822671a480bb205cdb35008e476c621143",
+   "bytes": 6420
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/object-management.md",
+   "sha256": "1d3b2319ede04247b2ffaac7eb0e1a6ca9f07a0a3fa75cf74fa4d072bba72f60",
+   "bytes": 6948
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/owners-dependents.md",
+   "sha256": "cc473b45d4537dda3a2e5835af62c2099a4cc17010fa65c93adb284ef7395c6c",
+   "bytes": 5246
+  },
+  {
+   "source": "kubernetes/concepts/overview/working-with-objects/storage-version.md",
+   "sha256": "640abffcbdbdf85a042a2a6c75e97d4c38ff769a79625c279d7bf59a3df54747",
+   "bytes": 7446
+  },
+  {
+   "source": "kubernetes/concepts/policy/_index.md",
+   "sha256": "0b92834d54625851fa18306a41386bcf7151874ba1cc4d307f51d2c3974a4770",
+   "bytes": 3969
+  },
+  {
+   "source": "kubernetes/concepts/policy/limit-range.md",
+   "sha256": "ee46e4ae69ab77b799f3e8e9d12c11a713529ac8172bb7710d6b6cb1e92dc717",
+   "bytes": 6910
+  },
+  {
+   "source": "kubernetes/concepts/policy/pid-limiting.md",
+   "sha256": "f660568bae38d509fe03deb01e15800c3e5823daa272e9cae26e47f6cac0029d",
+   "bytes": 5800
+  },
+  {
+   "source": "kubernetes/concepts/policy/resource-quotas.md",
+   "sha256": "95a9376c951c1ff0aea7511641069a20df299ee39db34d3e7f52ea674c657040",
+   "bytes": 31090
+  },
+  {
+   "source": "kubernetes/concepts/resource-management/_index.md",
+   "sha256": "0c6d4fe618132f309d49d3cbae4783fb721b9db8630842a2b106e1235e4edaa6",
+   "bytes": 384
+  },
+  {
+   "source": "kubernetes/concepts/resource-management/dynamic-resource-allocation/_index.md",
+   "sha256": "0e419b0f0593a6065c5b359a7b47f45829f75f162f5157e0875ed517c3ba4f5e",
+   "bytes": 4740
+  },
+  {
+   "source": "kubernetes/concepts/resource-management/dynamic-resource-allocation/device-taints.md",
+   "sha256": "a7da326779b65eff641e004052c4dd237d7ae8519046b9e56683d4e244ab4e4c",
+   "bytes": 7923
+  },
+  {
+   "source": "kubernetes/concepts/resource-management/dynamic-resource-allocation/dra-api.md",
+   "sha256": "7e92b1991d32b5d97cd0bfe85553710297af803d3550fd2d800afa1ad32f39fe",
+   "bytes": 28624
+  },
+  {
+   "source": "kubernetes/concepts/resource-management/dynamic-resource-allocation/dra-features.md",
+   "sha256": "c2cf004a2ade49c51575d766f2a7b8979df55c1042a3f49a50ad78da2cb98d9c",
+   "bytes": 17661
+  },
+  {
+   "source": "kubernetes/concepts/resource-management/dynamic-resource-allocation/dra-observability.md",
+   "sha256": "6bdb0ac579bd7a3a34fd023df5f5659ba6ad4c9bc31cd91aa3fd3e69c9160c1d",
+   "bytes": 24115
+  },
+  {
+   "source": "kubernetes/concepts/resource-management/dynamic-resource-allocation/how-dra-works.md",
+   "sha256": "20046bc876b741894d3a2604224946f7163232a39ab820257410ce26efe5bd47",
+   "bytes": 15761
+  },
+  {
+   "source": "kubernetes/concepts/resource-management/pod-level-resource-managers.md",
+   "sha256": "d4be0650f46d7b07d6a782317b3280178d15d58f0a8e260e59d1f29af7edf99c",
+   "bytes": 13211
+  },
+  {
+   "source": "kubernetes/concepts/resource-management/resource-managers.md",
+   "sha256": "91c31d258361017d7e608308e86caf075bd8d49720138fb7a2922a9c1b0dc412",
+   "bytes": 16839
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/_index.md",
+   "sha256": "2b5b7f4720b5c66bc7eea4646b3a9eb36baec1d92004c622858bd78a30ffaa94",
+   "bytes": 2251
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/api-eviction.md",
+   "sha256": "786a7b30a738381ed607aec7b758c02948267b0b469a0f5e8c820b1c8ecee0cb",
+   "bytes": 5035
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/assign-pod-node.md",
+   "sha256": "c8a9ec85ae5aa20d7f5fc28e6e91e039f6e1f3e53346d426bfd7cc41ccb9c5b2",
+   "bytes": 32605
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/gang-scheduling.md",
+   "sha256": "525b28037c6be82f20bee0040650650c8c6286efd3291a2d07a33af683efe674",
+   "bytes": 6707
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/kube-scheduler.md",
+   "sha256": "a3289ad80b90623b2aa9c37aeefb683699cca0cbe09ba694ceb47d4f13a560c3",
+   "bytes": 4917
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/node-declared-features.md",
+   "sha256": "55dac3b1af872c4a45e97de3e832288e0ed4f9226be3d1243adc702028a7fad6",
+   "bytes": 5702
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/node-pressure-eviction.md",
+   "sha256": "6570b8f7d3f007fe9592672e9a87227fc884a339e3a356a175db8ecdeaf181aa",
+   "bytes": 28856
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/pod-overhead.md",
+   "sha256": "085d768d664ccaa2cd901f625665f8f227f36834cbfdceb1d928482453993430",
+   "bytes": 7342
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/pod-priority-preemption.md",
+   "sha256": "762772f83d8e8988793b1c7edfe33fa0f7f897acda9afcf9ff9a5611ec4cd616",
+   "bytes": 23405
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/pod-scheduling-readiness.md",
+   "sha256": "6708ce688d841785ee3cff4354f52d8780eebd4b7f0b46119e5561872db4b7ed",
+   "bytes": 5084
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/podgroup-scheduling.md",
+   "sha256": "1e0ddb0d01d56b5d5d7db144a9227ac8b113d56740da69de7eabe75063220afd",
+   "bytes": 16007
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/resource-bin-packing.md",
+   "sha256": "062665d02a5e81f083bd95da37984f3735582f502e37aba6a0e02168130572d9",
+   "bytes": 8640
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/scheduler-perf-tuning.md",
+   "sha256": "4d97a1446a58b92da884411953c1067296339c345e23977cd6a87742ba9d84a6",
+   "bytes": 8792
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/scheduling-framework.md",
+   "sha256": "3d8ee1e3036740bcdae162b8b7819557d7f7d3af8422f7b9453b1c151b00d81f",
+   "bytes": 11827
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/taint-and-toleration.md",
+   "sha256": "a6ab707ca9464bd810341660b9c664b3887f8bc2a7366c80299d1b92c2632586",
+   "bytes": 18885
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/topology-aware-scheduling.md",
+   "sha256": "3524168359968bab228204286adec2ebfa8f25c1d85121efaf2ee1ceae090501",
+   "bytes": 5966
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/topology-spread-constraints.md",
+   "sha256": "4efffa8a1aa5651cc192886fdba74b4adedbb3d45c01d67cace78f0a7afa5dad",
+   "bytes": 29022
+  },
+  {
+   "source": "kubernetes/concepts/scheduling-eviction/workload-aware-preemption.md",
+   "sha256": "52c0c2d7895560e8abe4b3ecfd2386ee066f69424558ac973affa20e4ec9a7b0",
+   "bytes": 6682
+  },
+  {
+   "source": "kubernetes/concepts/security/_index.md",
+   "sha256": "3bd3bd1279808ff73c42749a9a0385cde84621a567d5a125ee4db2ca10571bac",
+   "bytes": 6372
+  },
+  {
+   "source": "kubernetes/concepts/security/api-server-bypass-risks.md",
+   "sha256": "b21439ef0511f9c929ff76383c5c3531f98bedc10a234c208e94dcc6598f8ed1",
+   "bytes": 8772
+  },
+  {
+   "source": "kubernetes/concepts/security/application-security-checklist.md",
+   "sha256": "af1aaa832ff4efdf316f65879d1b34d503bfa130e641046422c9511489d7366b",
+   "bytes": 6567
+  },
+  {
+   "source": "kubernetes/concepts/security/cloud-native-security.md",
+   "sha256": "7043c4bcdee32392f951603ecb779dfc5e04f5be56b3bf5d8bb8eb50853e1fff",
+   "bytes": 11701
+  },
+  {
+   "source": "kubernetes/concepts/security/controlling-access.md",
+   "sha256": "bf6f6c5c64a1e47fcbba4aebecdc7d0d361d85db7d50c68366bd4ede99f6eed2",
+   "bytes": 8373
+  },
+  {
+   "source": "kubernetes/concepts/security/hardening-guide/authentication-mechanisms.md",
+   "sha256": "faba8cc9fc8d4ec692d4cb7e1e88ed2875c1a4ad65037099762846f59920f17c",
+   "bytes": 9128
+  },
+  {
+   "source": "kubernetes/concepts/security/hardening-guide/dynamic-resource-allocation.md",
+   "sha256": "ecd3a1a4c5b15462b23dcf75829876b8f1ec53f08cde1365d98eb5826f335548",
+   "bytes": 3945
+  },
+  {
+   "source": "kubernetes/concepts/security/hardening-guide/scheduler.md",
+   "sha256": "b95553a92c5a0077986ebc0df465a53aa05e081c0288dbef8e1158d3ef6aa377",
+   "bytes": 6266
+  },
+  {
+   "source": "kubernetes/concepts/security/linux-kernel-security-constraints.md",
+   "sha256": "0ec3d32e655e085c109d2365ec1bf7a4031a63fbf2a6231d4c64a8713af22634",
+   "bytes": 14833
+  },
+  {
+   "source": "kubernetes/concepts/security/linux-security.md",
+   "sha256": "45ca489a133c173b70411471845e8ac7061c6e03b0e57cddc537825bb1128732",
+   "bytes": 1062
+  },
+  {
+   "source": "kubernetes/concepts/security/multi-tenancy.md",
+   "sha256": "4fa87adc3371db47420272e1219bd57742a9b5126c0d2b2b70b8738b3926c74d",
+   "bytes": 29514
+  },
+  {
+   "source": "kubernetes/concepts/security/pod-security-admission.md",
+   "sha256": "8797794316084b9d6a26ccccf6b9a1b15e0ef9a244c04eab12379d95d2286cc4",
+   "bytes": 7637
+  },
+  {
+   "source": "kubernetes/concepts/security/pod-security-policy.md",
+   "sha256": "dc3a62de40d3c99493f5af99867a686a8fd7f58aa2b33556c815ab6757e80a8b",
+   "bytes": 1064
+  },
+  {
+   "source": "kubernetes/concepts/security/pod-security-standards.md",
+   "sha256": "a7e5e08c9dc83cf0b0c6cb6e2eb028fac2ea32e3347e6009e4d66f6aa3615e56",
+   "bytes": 24934
+  },
+  {
+   "source": "kubernetes/concepts/security/rbac-good-practices.md",
+   "sha256": "66a7beea269cf055a305172a472d074527c07de5051ab5eb1ac4f811df78f81b",
+   "bytes": 12407
+  },
+  {
+   "source": "kubernetes/concepts/security/secrets-good-practices.md",
+   "sha256": "06b70ffff8db80ff9f5a456dc9d2fa653549d72b9514b8503864ed7d0637d33d",
+   "bytes": 5208
+  },
+  {
+   "source": "kubernetes/concepts/security/security-checklist.md",
+   "sha256": "45b19b870fae7739107ae83966b3babee3b23db3e623abbef87660a426493a34",
+   "bytes": 22986
+  },
+  {
+   "source": "kubernetes/concepts/security/service-accounts.md",
+   "sha256": "662d088bb1aaa45068bd763e612202ee8244767766ac79fcbe2f4f38dcb5b59b",
+   "bytes": 18441
+  },
+  {
+   "source": "kubernetes/concepts/security/windows-security.md",
+   "sha256": "bb3b84673bfd783b55b5dac241164350f7a32dee2affe9a3a28ef3241d6f88d6",
+   "bytes": 2569
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/_index.md",
+   "sha256": "8069818203351457fdd51cfd6653cafadb191c62daf0ecbd93d228683ad0ec95",
+   "bytes": 5796
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/cluster-ip-allocation.md",
+   "sha256": "c35c197f3a367ea7d934a6801da9bcef8718449f2b6bccca4f1d99c2585aab82",
+   "bytes": 4694
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/dns-pod-service.md",
+   "sha256": "29dad6c4a41b72ee310938f10902761877eebe38f5bd548172413b2a4801a568",
+   "bytes": 15166
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/dual-stack.md",
+   "sha256": "db2069b44faf45e1fe4233b3ffaf9c6426a04990f264d4342cb36f6548d9a527",
+   "bytes": 12568
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/endpoint-slices.md",
+   "sha256": "3728dde021155cb37ae1da6a9a9e0c8d02bbe8568fceb24fe0b40bc6e16c9caf",
+   "bytes": 9802
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/gateway.md",
+   "sha256": "7b79c969d0183ae9803da29c2bafa223a2486370a5dd39a8bfe6f526be7b1287",
+   "bytes": 12288
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/ingress-controllers.md",
+   "sha256": "3892dd86825234947279c5b2414d5c997edb2353141502fb9da9f9b2a669353a",
+   "bytes": 8604
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/ingress.md",
+   "sha256": "b93613d1621fe883b67f79a393cf4b5f6a71f0b7f722b162388f3a21e10fa47e",
+   "bytes": 29055
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/network-policies.md",
+   "sha256": "c5ab165e6c6d91f6abff48b06d57a57a600d7e8c5e91c3ced2cf0cf777e409a9",
+   "bytes": 23084
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/service-traffic-policy.md",
+   "sha256": "35017c2a24874d47b58759ba0e68bd3871693d04fb0835c465bb251cf087b506",
+   "bytes": 2354
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/service.md",
+   "sha256": "6d014ced1fe171abbea82556cecac6601333fe27ffa834aff1c3d5d6246a5398",
+   "bytes": 46852
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/topology-aware-routing.md",
+   "sha256": "b758dbbafd56482bb92eb9b391c0f0114a6e8a7eba7a52155c49c9ec37453678",
+   "bytes": 8712
+  },
+  {
+   "source": "kubernetes/concepts/services-networking/windows-networking.md",
+   "sha256": "a672866ba3d2189cb6c31b2b44a03853e53f0ff9231f060a17f76fb8863b79ff",
+   "bytes": 12876
+  },
+  {
+   "source": "kubernetes/concepts/storage/_index.md",
+   "sha256": "d5aedce3aaa43543de952527552daff2633a3ad5538ed3efab6641a8219f3f61",
+   "bytes": 132
+  },
+  {
+   "source": "kubernetes/concepts/storage/dynamic-provisioning.md",
+   "sha256": "87c555847a8ece97931f9547cd40722e77eb3629f137ad9b78f517ba470997fa",
+   "bytes": 5125
+  },
+  {
+   "source": "kubernetes/concepts/storage/ephemeral-storage.md",
+   "sha256": "502614f23cf3a94566d6e7d3b4414b97e0d6f56178fc0523b27f5ac8e1854297",
+   "bytes": 12793
+  },
+  {
+   "source": "kubernetes/concepts/storage/ephemeral-volumes.md",
+   "sha256": "402c1bcaf86930bc36aa58661b18b51c3a7f1e356019203586a1fa7254db3139",
+   "bytes": 11617
+  },
+  {
+   "source": "kubernetes/concepts/storage/persistent-volumes.md",
+   "sha256": "b0da38869bc1cdb5ed19f6424c2ef0fedefb5e10fb3603450f56a6581db90069",
+   "bytes": 51240
+  },
+  {
+   "source": "kubernetes/concepts/storage/projected-volumes.md",
+   "sha256": "e5df90f5561254133a754f9e4a238fde4fdd7098d171296c2f5dbe0fc47c6694",
+   "bytes": 12216
+  },
+  {
+   "source": "kubernetes/concepts/storage/storage-capacity.md",
+   "sha256": "f6ce6a3839014416b72e5c5c43098357b98ae378dbd02ddaed5f09f713fe0e82",
+   "bytes": 4750
+  },
+  {
+   "source": "kubernetes/concepts/storage/storage-classes.md",
+   "sha256": "d512ca27a20e3bff92a9bd28ea3a1d552bf03f436e06c48b3ec88308e8377dc8",
+   "bytes": 23272
+  },
+  {
+   "source": "kubernetes/concepts/storage/storage-limits.md",
+   "sha256": "79d5669604577782d5dd511ebc9f19ca93798a4ec3ce6263bc377760497d5a40",
+   "bytes": 5859
+  },
+  {
+   "source": "kubernetes/concepts/storage/volume-attributes-classes.md",
+   "sha256": "2584cd2eae602d70fa2160f1dc534366cf21c702d213d4724f71975f4757512b",
+   "bytes": 4748
+  },
+  {
+   "source": "kubernetes/concepts/storage/volume-health-monitoring.md",
+   "sha256": "a482f15ea76af62d8d3eb94dd6a4f7912b8cc2670b4b96569e34a180896913bf",
+   "bytes": 8122
+  },
+  {
+   "source": "kubernetes/concepts/storage/volume-populators-and-data-sources.md",
+   "sha256": "500d4bb18f4c897d00f7304f24e48156c68b998a720dcf10d694fa5d4e20028f",
+   "bytes": 7788
+  },
+  {
+   "source": "kubernetes/concepts/storage/volume-pvc-datasource.md",
+   "sha256": "2c5192b8799fc0a6fbdb4b4044b05308af43685c06f2e5f183823216f9103d25",
+   "bytes": 3170
+  },
+  {
+   "source": "kubernetes/concepts/storage/volume-snapshot-classes.md",
+   "sha256": "34a4425079a3b84fb40a3804e3da307d4b057d1a04a688c60c25f479966d349c",
+   "bytes": 3761
+  },
+  {
+   "source": "kubernetes/concepts/storage/volume-snapshots.md",
+   "sha256": "a0e5e62ed3151dcdcebc3863698cafd4a41b78db49003c537edbb1669de72c28",
+   "bytes": 12350
+  },
+  {
+   "source": "kubernetes/concepts/storage/volumes.md",
+   "sha256": "12f2cd6d66512b683ecd00d0b32cff41b70709068f691c063043e342c88ce193",
+   "bytes": 54476
+  },
+  {
+   "source": "kubernetes/concepts/storage/windows-storage.md",
+   "sha256": "f92c6f06bae926d9d17660c6a8707149af7cfd49d1b80a53dd0c64c1ffddbdc3",
+   "bytes": 2995
+  },
+  {
+   "source": "kubernetes/concepts/windows/_index.md",
+   "sha256": "6af623421ca3ed96f4679568e2d2ad3583cc3b19fbfd57f6349309e7cc4a6854",
+   "bytes": 1631
+  },
+  {
+   "source": "kubernetes/concepts/windows/intro.md",
+   "sha256": "2bbbb8d188d969e98ec998ca6be694035c14451afc3ce26ddf02f90e6baa8b67",
+   "bytes": 21842
+  },
+  {
+   "source": "kubernetes/concepts/windows/user-guide.md",
+   "sha256": "8ad7a09afe3c17dc52b2d6046d2259efa9382351d3d8c4d88d02beb8aed44b51",
+   "bytes": 12876
+  },
+  {
+   "source": "kubernetes/concepts/workloads/_index.md",
+   "sha256": "72cb00d6355a83caf6dfe27f49dc4e074f7b0f1fdd79cc6f055950fd9715aad1",
+   "bytes": 6369
+  },
+  {
+   "source": "kubernetes/concepts/workloads/autoscaling/horizontal-pod-autoscale.md",
+   "sha256": "7188382cda8faf81610d1cece38767dcb2242b4e13331412a94ca2531ff44aa7",
+   "bytes": 34763
+  },
+  {
+   "source": "kubernetes/concepts/workloads/autoscaling/vertical-pod-autoscale.md",
+   "sha256": "4b24404e75ee420b9cbd8cfe8b6b337d3ab4c7fb27faaf86d64093b48b60a549",
+   "bytes": 14245
+  },
+  {
+   "source": "kubernetes/concepts/workloads/autoscaling.md",
+   "sha256": "f90d61f0371f17c8dde5c655c5bde20cc2bb0f57e28a1c249669a28744581960",
+   "bytes": 6610
+  },
+  {
+   "source": "kubernetes/concepts/workloads/compositepodgroup-api/_index.md",
+   "sha256": "2fe3942113b7071e60e7ba199ca70986ecd274fb113c5f4112889a907f7b3be9",
+   "bytes": 6324
+  },
+  {
+   "source": "kubernetes/concepts/workloads/compositepodgroup-api/lifecycle.md",
+   "sha256": "0eeca4835aef9d01b7094569bb5a2547a9e9bdb32faa01702b8cc1d74fd611bf",
+   "bytes": 4013
+  },
+  {
+   "source": "kubernetes/concepts/workloads/controllers/_index.md",
+   "sha256": "58b0afb101283ceb6b1c2979780d36efa06dee2df1ec140df6000731188008f8",
+   "bytes": 3505
+  },
+  {
+   "source": "kubernetes/concepts/workloads/controllers/cron-jobs.md",
+   "sha256": "bd9f8ec1b5e89a32db7f7d33d8774849fa32e816375bbb1da4a99def4604a5f0",
+   "bytes": 14124
+  },
+  {
+   "source": "kubernetes/concepts/workloads/controllers/daemonset.md",
+   "sha256": "f785013513269d60e125244193bcfb345ca244507bc4874ddafd12f62d1dae97",
+   "bytes": 14881
+  },
+  {
+   "source": "kubernetes/concepts/workloads/controllers/deployment.md",
+   "sha256": "ca4571585f3af4039292fdbbe127e296e1b86d44b4df52cec75dbf51c96da513",
+   "bytes": 59790
+  },
+  {
+   "source": "kubernetes/concepts/workloads/controllers/job.md",
+   "sha256": "d7aa50f7270853d3bb944bbf98478b6e0b25aad33ff6a2a29f2d33b37d63a6f7",
+   "bytes": 65389
+  },
+  {
+   "source": "kubernetes/concepts/workloads/controllers/replicaset.md",
+   "sha256": "973d23febbb9c5c8dc791d9301f5c15d4a05b96a36550f5099ce443fed4602b9",
+   "bytes": 19303
+  },
+  {
+   "source": "kubernetes/concepts/workloads/controllers/replicationcontroller.md",
+   "sha256": "d8e26014f661fecdf89a816019e1273f8ff3439bf99ba3fb305142353d573b77",
+   "bytes": 18779
+  },
+  {
+   "source": "kubernetes/concepts/workloads/controllers/statefulset.md",
+   "sha256": "80644699b3b98a7e1574cb9147a5a22b5196b35ae06cbb60248a399a64bfd2e2",
+   "bytes": 27516
+  },
+  {
+   "source": "kubernetes/concepts/workloads/controllers/ttlafterfinished.md",
+   "sha256": "ce1f476bd9bc596535efed8e57b292ae475931baa14d2496112dee1717b19c41",
+   "bytes": 4008
+  },
+  {
+   "source": "kubernetes/concepts/workloads/management.md",
+   "sha256": "80d1eac6e565f933be10541e495e073898e360dddac6c406e41fb8ca0e79d11f",
+   "bytes": 16000
+  },
+  {
+   "source": "kubernetes/concepts/workloads/podgroup-api/_index.md",
+   "sha256": "096945069600dfe7d0003f88284d1144e11461cb55ab1dbb11779e7fe850e2f2",
+   "bytes": 8654
+  },
+  {
+   "source": "kubernetes/concepts/workloads/podgroup-api/lifecycle.md",
+   "sha256": "32f9f8de9e0cac55a45ea05eaca77e9db157024753f1b79d96d5f67b881a1273",
+   "bytes": 3757
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/_index.md",
+   "sha256": "57025589237f3532715529a158fdb9444f93051ac944b07134100deeb65e7514",
+   "bytes": 26068
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/advanced-pod-config.md",
+   "sha256": "ab61c6deaaadec5e874a501c81ef805520216f84ce397c3b7c093507569367b6",
+   "bytes": 9490
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/disruptions.md",
+   "sha256": "1e271a28d6a8adf51b19b123d7a0642646c08f0a4103e18a7869cccc888ca320",
+   "bytes": 16701
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/downward-api.md",
+   "sha256": "4fb4227381d477a859ad0402bc7f71e16409f5ba5a2b75b53479f3f20810953b",
+   "bytes": 5887
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/ephemeral-containers.md",
+   "sha256": "9f9756d77fdad8ee352216d98c81b6569d2de50e12104078224e86b3c40a09b3",
+   "bytes": 3370
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/init-containers.md",
+   "sha256": "770728807f4f2d66ef63a5cbd2e8f94df60dd1286136190c5317c2c00dfda417",
+   "bytes": 15716
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/pod-condition.md",
+   "sha256": "993c3a3630cdfe7d26d0ec707eb9721a6483d17b33dc563c3d121564c40cc9ae",
+   "bytes": 14434
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/pod-hostname.md",
+   "sha256": "681d2d0c81ccc032d1c31ed190e4cbb068ba3ac23c8f161dd420f4aed2d7cdd7",
+   "bytes": 5065
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/pod-lifecycle.md",
+   "sha256": "1d81a56b63aa75e10d3cea41978420da7c046027a143c56852f6698ff5e6623c",
+   "bytes": 56400
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/pod-qos.md",
+   "sha256": "9abea7c4655d62b5b33bd8bb452e2fc70b9fc6fcfb1c41c942b2d96771fd3d67",
+   "bytes": 12110
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/probes.md",
+   "sha256": "a810dfe6150b79d3876af0853676219ed6991edcf84fc437e75b962a02bb4949",
+   "bytes": 22548
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/scheduling-group.md",
+   "sha256": "afcc9cc4ca27d91cb946f56f1ddd95a4565e297e0fd9b4d2ae7f043141b9f573",
+   "bytes": 3056
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/sidecar-containers.md",
+   "sha256": "e0b5b81427e6ed5bb2a2261b92be80ed8881abb69f2f65b0c08d19bf4e2f70a7",
+   "bytes": 8986
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/static-pods.md",
+   "sha256": "41326c85036f50362741467fb66234f44036deb6642b089967585d3bda375301",
+   "bytes": 3443
+  },
+  {
+   "source": "kubernetes/concepts/workloads/pods/user-namespaces.md",
+   "sha256": "73729d56ee8dbe69362b407bec8c9877ad003b3edc9ef56daad2d7bdcdb297e0",
+   "bytes": 14964
+  },
+  {
+   "source": "kubernetes/concepts/workloads/workload-api/_index.md",
+   "sha256": "c0abec0189409610f49ae8c891a5aed33e72b36b6c437dd3172edb26926ab3c0",
+   "bytes": 9607
+  },
+  {
+   "source": "kubernetes/concepts/workloads/workload-api/disruption-and-priority.md",
+   "sha256": "7029e9fc780948d08e6a09e3fb2d7388da66e94500993226567491761a3599f4",
+   "bytes": 7724
+  },
+  {
+   "source": "kubernetes/concepts/workloads/workload-api/policies.md",
+   "sha256": "77c6937470441035641d39f0d20d599f7eb1963219206878569ce55ff3babed3",
+   "bytes": 4854
+  },
+  {
+   "source": "kubernetes/concepts/workloads/workload-api/topology-aware-scheduling.md",
+   "sha256": "6b976f007753facc183f2dcec2f5a9916be00ccff1650a2e7320001facfec5aa",
+   "bytes": 10221
+  },
+  {
+   "source": "kubernetes/concepts/workloads/workload-api/workloadbuilder.md",
+   "sha256": "03db739eddc90dd6fcd5cd2f4cbc1926ec6b4e01e9632911656a6d5790c566db",
+   "bytes": 13428
+  },
+  {
+   "source": "kubernetes/tasks/_index.md",
+   "sha256": "1cc06ea63be94d9bedde4ac5377bb31ea7ca0395e60727a7e0d999e980bcfabd",
+   "bytes": 406
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/_index.md",
+   "sha256": "1b3b1cbfd7446bace315524a88d8c4179586f2bf782344376e8216275689635a",
+   "bytes": 196
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/access-cluster-services.md",
+   "sha256": "572e4e72e1cb764135b05c503836889ab829811f0bee391609bd4fb0527db09e",
+   "bytes": 6990
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/access-cluster.md",
+   "sha256": "c0f9bf95e3f56b1a3636edaceb672668e1c9a392d365464d3929a27ad09c060a",
+   "bytes": 9278
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/communicate-containers-same-pod-shared-volume.md",
+   "sha256": "cf8386e45b2974a206b9336d936bfd6f6b20e8cb9e38ac40ab95474e16395984",
+   "bytes": 4440
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/configure-access-multiple-clusters.md",
+   "sha256": "fefbb1cf660e8129dd8103f99e833b187f78ee105c541ecd6bae8d2d563b2b88",
+   "bytes": 12417
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/configure-dns-cluster.md",
+   "sha256": "a0a02a794a596003eed0d29f64bec074e489792a14aba5a7c04052ce71cc1cab",
+   "bytes": 479
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/connecting-frontend-backend.md",
+   "sha256": "f54568b0d75d20420a122a4835ced5c87b0300aaecddb42c02466a68e2a865c0",
+   "bytes": 7656
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/create-external-load-balancer.md",
+   "sha256": "5852b6ea386970540971ed1a2a0223ee1382be31728346a26e6dc1e7fcbb1512",
+   "bytes": 7385
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/list-all-running-container-images.md",
+   "sha256": "cd7e580cfd30c02a971ba12daab2db9de49bfc6a04a555a9477d4f80d9655f75",
+   "bytes": 3135
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/port-forward-access-application-cluster.md",
+   "sha256": "33e9df9fb28e1e5462bda9dd43ddc6a218dd6abaee2da2fafde8a304f7ab72cd",
+   "bytes": 5837
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/service-access-application-cluster.md",
+   "sha256": "9c8de41335f99bbc612898d64c9a1410b7802f3731be8e89c5673143a88b6ffe",
+   "bytes": 4858
+  },
+  {
+   "source": "kubernetes/tasks/access-application-cluster/web-ui-dashboard.md",
+   "sha256": "28e69f782aa3024e956ff643bbcd552724f19a9ad58feaf472dfcf151c85a477",
+   "bytes": 12782
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/_index.md",
+   "sha256": "4ef58035c58f8560abc96d607da4756a92e45d860a3a7b2d73ed3e71f3cf0fff",
+   "bytes": 111
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/access-cluster-api.md",
+   "sha256": "a1802eea3f9f09ec5b3e97270ce22e8fd2fb5e2677123f8ff443ab2986f7f192",
+   "bytes": 13528
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/certificates.md",
+   "sha256": "d9913a521c9303eb55a50b5b94ef76efacdfcecaae1b3762e66abbc9d07988ca",
+   "bytes": 8817
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/change-default-storage-class.md",
+   "sha256": "5e1e892d061c0d76e737731245b57f6756f863127f0ebc0c6786f646186d24d4",
+   "bytes": 3506
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/change-pv-access-mode-readwriteoncepod.md",
+   "sha256": "a2789fbf7dd78e31f3ea46bf31298b87c87a508177bc1601a90fb406674f61da",
+   "bytes": 6367
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/change-pv-reclaim-policy.md",
+   "sha256": "5ec97190a2199d113605e73b9b5dd646998835bd1ee242a90f227ad716b9a215",
+   "bytes": 4173
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/cluster-upgrade.md",
+   "sha256": "a28767d6e96565e8a7b43cce7bbda46249cd09f7537001200387095bce97fc6b",
+   "bytes": 4643
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/configure-feature-gates.md",
+   "sha256": "d3b09acb561911e456b298b732782ac7a851d9274ff29d026b53cdaa36a8241c",
+   "bytes": 7938
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/configure-upgrade-etcd.md",
+   "sha256": "a3cf8072f4e4ba7819f4c8dfc04206e290adc997de1069dde522aa051ef83966",
+   "bytes": 20727
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/controller-manager-leader-migration.md",
+   "sha256": "d299a5454876d1fe6314aebd38e79acdea90367fe07dc01d4304b5e37190d338",
+   "bytes": 11725
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/coredns.md",
+   "sha256": "3a925c8813a6d22c1c2ca47991782585ff327f6ceb7308867cc9d30435437fdd",
+   "bytes": 2237
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/cpu-management-policies.md",
+   "sha256": "747eb05fd900d646ab7ccfea1207a057092cc4bc722a09caabc327fac04db3eb",
+   "bytes": 9290
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/declare-network-policy.md",
+   "sha256": "b290e09d2400643f7d461bfdda58f5b839d5f603038f4e3ab9de0db7a0e9e441",
+   "bytes": 4267
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/decrypt-data.md",
+   "sha256": "d7aa3b60bbf05e09f34a74cd9402bfd0c25391ff48e0cbcffddefbcbe1bdcda0",
+   "bytes": 6305
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/developing-cloud-controller-manager.md",
+   "sha256": "56c3b91c7951b0f75174a5320eb1afeec7bec090d7c910cd6cd7ccfbc1571a48",
+   "bytes": 2295
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/dns-custom-nameservers.md",
+   "sha256": "a06806d17f235c81e6e0d2dc5a32e5bc3310f6a2cea151fa4adab26c6be1613b",
+   "bytes": 7584
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/dns-debugging-resolution.md",
+   "sha256": "9243352e9ce5ef0c474e5277d366de20aa4ee964e8300faa80b1cc0a338809f7",
+   "bytes": 10564
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/dns-horizontal-autoscaling.md",
+   "sha256": "751c349898885fbf80506efcf1079331e64f36bfaefdab539a5da3792712979e",
+   "bytes": 7069
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/enable-disable-api.md",
+   "sha256": "131c078b4cf220639d77f593eb64da88fd90c1e78904724b76fc1d5024872c11",
+   "bytes": 1080
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/encrypt-data.md",
+   "sha256": "aa9b1441b32a270db67ab41969c34fbf345f4c6ef898e7bb104afa9cea66fbbc",
+   "bytes": 30336
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/extended-resource-node.md",
+   "sha256": "79b0aeea27ea27c2cdf98907b3df6baddaed5677d74e3a6fe4cf170e3fb5994d",
+   "bytes": 5765
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods.md",
+   "sha256": "eb31205fc46206af2a229b494a91a98c5d684f5f4e5eb0cd5d657077fa4796c7",
+   "bytes": 1316
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/hardening-dra.md",
+   "sha256": "c0f06638c80a87ee9d2f91c68a1fffd16d4cdb3c41d886a8ac1f67ac922a08ed",
+   "bytes": 3433
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/ip-masq-agent.md",
+   "sha256": "63aa8114a30274184dd40c361cc27b1f1e0cebface2950841d02870d860f61ff",
+   "bytes": 8008
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kms-provider.md",
+   "sha256": "8d07f79ce665ccbf2c3261a27b9776884988f1540ba76e6ad57769a81ea600c9",
+   "bytes": 20662
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubeadm/_index.md",
+   "sha256": "0ad9061a9073a2066569636ee5b5cd626baac4a5a8d753c37e865d4d7325a8ed",
+   "bytes": 291
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubeadm/adding-linux-nodes.md",
+   "sha256": "716ccf1deb5a126186ac656098c92109f7eab713efd31ac8ebf8b0c24f7c3043",
+   "bytes": 4033
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubeadm/adding-windows-nodes.md",
+   "sha256": "cf88d286edfad4cb88916d379740990411f445a948ec5831fd39708df5f7865c",
+   "bytes": 5751
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubeadm/change-package-repository.md",
+   "sha256": "b619c10f7da4effd43cfb85de6e1e358695e907a944f8e20f65006eef38800cb",
+   "bytes": 7284
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubeadm/kubeadm-certs.md",
+   "sha256": "a0a5a501f78d8349a2bd07ed86107c69c0767eac45d07b9e13dee5c621e6101e",
+   "bytes": 31387
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubeadm/kubeadm-reconfigure.md",
+   "sha256": "0121ee17444b0a8fd4b2139adcc5f974892c4181cc1732a6f81d765f0200c257",
+   "bytes": 10376
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubeadm/kubeadm-upgrade.md",
+   "sha256": "a64dcc3426685ab53acc86194182782ed187b7090d15aa248991d5ec88c33e3f",
+   "bytes": 16267
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubeadm/upgrading-linux-nodes.md",
+   "sha256": "6f36d73b1eb2d991eaf9e06084bf1e437698b105f96e99ecccaf694311bc6b23",
+   "bytes": 4344
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubeadm/upgrading-windows-nodes.md",
+   "sha256": "6fd97762557ee6fa9e34377cbec25c56aea925b5d636e2fbe5be8e1fe034e842",
+   "bytes": 2736
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubelet-config-file.md",
+   "sha256": "c8e3463f648a33b769063fd5b74d7f52e041e42714d810b3cc13d0a5dec842de",
+   "bytes": 11366
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubelet-credential-provider.md",
+   "sha256": "012b1b19a8caac41d683a11715c2b74e8eebe521b979d25926ad38a2964319c3",
+   "bytes": 15835
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/kubelet-in-userns.md",
+   "sha256": "d84d91d0cb90cb079bdfbf65441dd8edb0ccd2c3fb2fe3dded1a7d6e331cec7c",
+   "bytes": 12757
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/limit-storage-consumption.md",
+   "sha256": "58141601719f6b0670e16daf14e467ee28977220e6fbc091251e10cfcefddd6b",
+   "bytes": 2777
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/manage-resources/_index.md",
+   "sha256": "9997fd15bdbd9382295c6b02de2265d2b2acbe679d542a2b38acbb91944e2ee8",
+   "bytes": 64
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/manage-resources/cpu-constraint-namespace.md",
+   "sha256": "9dec20d2d45703eadd32c871b95cb02a69f025716e76d42877c45b49b92a3012",
+   "bytes": 9992
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/manage-resources/cpu-default-namespace.md",
+   "sha256": "fb2e1bee209cc7d545cbdcb1e8f8fc28c2607bd6155034194a1938f85a20caa9",
+   "bytes": 7029
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/manage-resources/memory-constraint-namespace.md",
+   "sha256": "86fc6b8d7b530dc62d13e3cc51027bb962ed409bf05ad3bbf579235c56caf266",
+   "bytes": 9745
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/manage-resources/memory-default-namespace.md",
+   "sha256": "79fe083108936b057785957ab66b6873ad21dd88004ccb8892fa343c07490209",
+   "bytes": 7746
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace.md",
+   "sha256": "48e7ecfb31d127e1b588fc4cbf114b989814bcbb7114e2e988cb027001a0586f",
+   "bytes": 6415
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/manage-resources/quota-pod-namespace.md",
+   "sha256": "3e0ac6d08ef61c34d799d4a9e2161aae604072837d9a0fd37fa94c0d8390b1a6",
+   "bytes": 4171
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/memory-manager.md",
+   "sha256": "aa7b9e64d85d89094389429742a04061b11575c079628191fef8aac9de3d7602",
+   "bytes": 13426
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/migrating-from-dockershim/_index.md",
+   "sha256": "ae7b79cbe041a297e2e93544b8e57b398ab2fd012755f8d21e802929e4c0aeff",
+   "bytes": 2361
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/migrating-from-dockershim/change-runtime-containerd.md",
+   "sha256": "6bd8bb94416ed25e5d94b48bf853b3d5423a910eb31cf1a74cb542a6e0216fdc",
+   "bytes": 5106
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/migrating-from-dockershim/check-if-dockershim-removal-affects-you.md",
+   "sha256": "f14e535bb66f6f759b82df4ef08da76143a12f3950b322149c804d7540f1b7e0",
+   "bytes": 7054
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/migrating-from-dockershim/find-out-runtime-you-use.md",
+   "sha256": "4fb9c5b269e90ecd89f9e10c01f9806163b73b99bc34d4556d87a2e0d503ab42",
+   "bytes": 4017
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/migrating-from-dockershim/migrating-telemetry-and-security-agents.md",
+   "sha256": "208ae728b361f0790a5698dda93ec1a753870ca7d75309309f4cbde7a8a265e0",
+   "bytes": 7790
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/migrating-from-dockershim/troubleshooting-cni-plugin-related-errors.md",
+   "sha256": "9909389feb31868763e6eee042a0965c0f43c7ecba90ad25045d4487725280cb",
+   "bytes": 5534
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/namespaces.md",
+   "sha256": "073cf22a6a046078ef3dc7a02bf7d2ffee633315f40266d894e05098b3065b7f",
+   "bytes": 11688
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/network-policy-provider/_index.md",
+   "sha256": "e4c7156a8bcc89e1a45f6bee2e23514dceae6ad13c8e5af6fc9ddc4c8c504d18",
+   "bytes": 60
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/network-policy-provider/antrea-network-policy.md",
+   "sha256": "76b92b0d32e904711022c8823c9ca4cdd3b7bdc0b4f62260601480d942309292",
+   "bytes": 820
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/network-policy-provider/calico-network-policy.md",
+   "sha256": "0a6d7e6cf7437188ddd54aa8d0bc1720d3968c222a9a99021e6c73355ed13548",
+   "bytes": 1541
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/network-policy-provider/cilium-network-policy.md",
+   "sha256": "ffa351bf47338f6dc7c6109fd82b6989ffe4fab1ccbb93498da1602c2c855fda",
+   "bytes": 3481
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/network-policy-provider/kube-router-network-policy.md",
+   "sha256": "c3403079ce6f867daa6a35cdfde1278121e5aaee74a6fa33d82d8e0c91174762",
+   "bytes": 1132
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/node-overprovisioning.md",
+   "sha256": "7518609bae6460008d5ed83d559ffd203a24aaa32b405a43d66089be596755d6",
+   "bytes": 5588
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/nodelocaldns.md",
+   "sha256": "e8fb53b86438636f20f6cfbfe6c5bb8a612da39eb3ecba63156c2a61fc3b1753",
+   "bytes": 8371
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/quota-api-object.md",
+   "sha256": "c65bf913ecfc0c821f267f030eed7dbad7c178ea5d43fef80a3ad7f7faa69e9d",
+   "bytes": 5061
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/reserve-compute-resources.md",
+   "sha256": "13a98e226aec6a3daf0252a26bc54e44624daa3ed3dbb5e80d7649bc90fb18e1",
+   "bytes": 12198
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/running-cloud-controller.md",
+   "sha256": "2088c5565bb9ae5f77239a11541857f96ca314be20f97a0c0bcb55725f261aae",
+   "bytes": 6803
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/safely-drain-node.md",
+   "sha256": "1f53a4ee6c6180d3764a82d52d1861531d664e2774118b813787419287f97c69",
+   "bytes": 5925
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/securing-a-cluster.md",
+   "sha256": "3e80c432c7b3316cedad3ebc4a3a4b419217149ddd9787db8dc470c81bb2d682",
+   "bytes": 15899
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/switch-to-evented-pleg.md",
+   "sha256": "0888a935d0c96d0fd0260312ccc8c8edd84e9c9ffe2083379ff02ab9ef9cf4a0",
+   "bytes": 4323
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/sysctl-cluster.md",
+   "sha256": "9f8824061e0e215f0ebcc6e71d7ba60cc2ab329d79fc1a480b4b77f94db6c2ed",
+   "bytes": 11797
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/topology-manager.md",
+   "sha256": "daf11cf2bcab02e8ad6add1ea3cd5c2966aa8e1a842cbf2510b20179b14405df",
+   "bytes": 18026
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/use-cascading-deletion.md",
+   "sha256": "207e85f78c54c12e260338563340aa20d15a2f1dbecbd6325ddcb686c86b0952",
+   "bytes": 6146
+  },
+  {
+   "source": "kubernetes/tasks/administer-cluster/verify-signed-artifacts.md",
+   "sha256": "8d9b3074dd7ceae6245e177acaba235d1be972a5a8d029a29e6866baf1ff2642",
+   "bytes": 5012
+  },
+  {
+   "source": "kubernetes/tasks/configmap-secret/_index.md",
+   "sha256": "d7ea47e477e976c68e7cd1ec64a66a94c215dea06eb08886376a9a5ea696d360",
+   "bytes": 110
+  },
+  {
+   "source": "kubernetes/tasks/configmap-secret/managing-secret-using-config-file.md",
+   "sha256": "bb70cc915ea1a2294ee223d4fce26ae9a5841166bc0eefd75f9bd385509d3894",
+   "bytes": 6621
+  },
+  {
+   "source": "kubernetes/tasks/configmap-secret/managing-secret-using-kubectl.md",
+   "sha256": "8d86348bd4fb8a0404533ee3eacdc4f45f45a0664d5feb0c200119b62f056043",
+   "bytes": 5386
+  },
+  {
+   "source": "kubernetes/tasks/configmap-secret/managing-secret-using-kustomize.md",
+   "sha256": "8b23f6db0118c7baf4bc5f71408cfcab4030ff9b565a30e0af74116c8f0e35a2",
+   "bytes": 4096
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/_index.md",
+   "sha256": "9598a6b53376b4b4b37804c45ed45223d63e23ec6be05195f2376e7e778fee2d",
+   "bytes": 132
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/assign-cpu-resource.md",
+   "sha256": "c0483eb0d4c85d0f60365a332a0b2aa39fbb94ca7d034253f781a0184c4d86c2",
+   "bytes": 9745
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/assign-memory-resource.md",
+   "sha256": "0d8b53e0a6268bd6305f19b1ec57e061a58480ee3eed8fac02f0635077f3b726",
+   "bytes": 11850
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/assign-pod-level-resources.md",
+   "sha256": "915a8b84f5d2e5d9f06b4b8c44f33e8cfcfa9acee4614a94a4edb01160e71ff5",
+   "bytes": 10367
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity.md",
+   "sha256": "34802f776b05b9123f6569937945f2eec41ddeedad1897100c2d488be9718b0d",
+   "bytes": 3519
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/assign-pods-nodes.md",
+   "sha256": "62f6dfe64d447c4e6e57018fb78a0142d2ea89a12ba6c50f7b361075e39d7c1d",
+   "bytes": 2958
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/assign-resources/_index.md",
+   "sha256": "d28ae286701a07bf0c46c1ddb9fd527d4e3f48a9898421539cd26c5e368bc0aa",
+   "bytes": 142
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/assign-resources/access-dra-device-metadata.md",
+   "sha256": "b0d0351cd26d3b714436ecaa5af1d7190e15bc48880ea492975a4bc92236583b",
+   "bytes": 8408
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/assign-resources/allocate-devices-dra.md",
+   "sha256": "02ba0205b04a12e45172598c902da43f9f41bd5f1f7669b13ce0252396d1ec09",
+   "bytes": 7215
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/assign-resources/set-up-dra-cluster.md",
+   "sha256": "c020aecc143188d09e1eb8d7b365526b932cadf02aa130d386ee2157adf1eb98",
+   "bytes": 6629
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/attach-handler-lifecycle-event.md",
+   "sha256": "37c34df5637664b44137f413b2da6f6371bb2894a4b54389ac2bcea28753d147",
+   "bytes": 3279
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-bind-mount-options.md",
+   "sha256": "40dc317f5ef76bff190b5a558cb6af1c352710baa48eb086a5f3ba903d240f90",
+   "bytes": 2050
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-emptydir-volume-mode.md",
+   "sha256": "44d9a3e7e81208f32ba9239b13efa9b4c554bb08a9a2c203e8be7640543cbf2d",
+   "bytes": 1786
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-gmsa.md",
+   "sha256": "f1b65095530229f57bbcb99839b3a7992daf91d69359e9f3d3093e0d23cd7ca7",
+   "bytes": 13687
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-liveness-readiness-startup-probes.md",
+   "sha256": "bf80ca8ec4ffa9c71c06a11c515dcb34f18132b4cbe52896b5acd9b5989c6c0c",
+   "bytes": 14823
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-pod-configmap.md",
+   "sha256": "7d9679531fda13c00956f049d70c1c90efc474cd76415147a3e2103b0d0e76f5",
+   "bytes": 28884
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-pod-initialization.md",
+   "sha256": "d1f5657d72285411d8bec1c0502695d7007c774799b308163bb3df8802bd9280",
+   "bytes": 2569
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-projected-volume-storage.md",
+   "sha256": "e044f30cdcc285229a2799c7ea3a5037559bd8ea47bbcd8c55d095969a465969",
+   "bytes": 2501
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-runasusername.md",
+   "sha256": "52984862a222b8d9a6a6db93d8eb9e13df97855f8f7851c11bbc34125bb12557",
+   "bytes": 5297
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-service-account.md",
+   "sha256": "bed151229b4f94e8d393e95528a391284dc5d172c0f65e41d1338243f3b1e2f5",
+   "bytes": 20609
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/configure-volume-storage.md",
+   "sha256": "dba83c6819be85333eba543296683de35f51d75e436fee0ffccd4a0544ed4e61",
+   "bytes": 3965
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/create-hostprocess-pod.md",
+   "sha256": "a90f6085f2b9d8de3b55c59909dce4a939abf62aac4851e1c78220c1c566afaa",
+   "bytes": 12705
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/enforce-standards-admission-controller.md",
+   "sha256": "b4c7794b4b0ecd34b5f69b36b4a473347e05bb2bc977f7e9730f48b352283cfa",
+   "bytes": 2469
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/enforce-standards-namespace-labels.md",
+   "sha256": "c56331f1115e86ff6ab59f7c2774fbf9c3e42189bb6aa7e2b8f86f5d07ed4c13",
+   "bytes": 3665
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/extended-resource.md",
+   "sha256": "74fcac9200cea70890acf8fc7f82d811a3e76df69a086623276af9402bf8c8fc",
+   "bytes": 4212
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/image-volumes.md",
+   "sha256": "a97f140c5516f8e295f5687cd48354c754868a8707b4699409b4ce418d8ccb91",
+   "bytes": 2192
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/migrate-from-psp.md",
+   "sha256": "d06685dd957ec5bf4df5a7432e0f23f773c666259c32f8b604c6612e144b9691",
+   "bytes": 18833
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/pull-image-private-registry.md",
+   "sha256": "e033c88e79c4d815fbb82f40c8d7492e5db1ffdbbb794cdf83b4cb6b7543b242",
+   "bytes": 9022
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/quality-service-pod.md",
+   "sha256": "11dcc93bffe2f83be37c4e38e6f495887c97d30fccb7da1b5757281e854d4183",
+   "bytes": 8143
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/resize-container-resources.md",
+   "sha256": "9112de4be7e016fb808b88fe59471fe78ae2b9a3c43d62b938693423af3a9ea4",
+   "bytes": 17082
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/resize-pod-resources.md",
+   "sha256": "30187bb645c0a74b2bb3d43be1ef7d42fa19406a2673bae9170459b7fb8a135e",
+   "bytes": 8779
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/security-context.md",
+   "sha256": "4a5fef2ef81bf575eaed2e5dd9b712b7e0ae5381df35f19cd6090ef2359c5b0b",
+   "bytes": 31748
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/share-process-namespace.md",
+   "sha256": "9e0d3609cc75a414a1d9f7d78b8e85607a7e81a40f329c094f7172f41393cef7",
+   "bytes": 3625
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/static-pod.md",
+   "sha256": "be0eaac8967eec09107b4c36c787dee76b4a69a583ce08898a723aa1a13025be",
+   "bytes": 9523
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/translate-compose-kubernetes.md",
+   "sha256": "ff331b5313c7376dd5f3d80a33af53ccf3d6d5e489aa273f05b4ca8719bee728",
+   "bytes": 16403
+  },
+  {
+   "source": "kubernetes/tasks/configure-pod-container/user-namespaces.md",
+   "sha256": "2c7a6b8c3a880daec6429aca96eea49092c6a99655f0eb0d6f4c8e597399dd6d",
+   "bytes": 3447
+  },
+  {
+   "source": "kubernetes/tasks/debug/_index.md",
+   "sha256": "78b89cadc16aff3303b37d236cf38272c02f8bace42603937398c275b0abfd9b",
+   "bytes": 6943
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-application/_index.md",
+   "sha256": "3117b127ab7e5bd7b3c95c0dc2747d536ccea4211048fbe406778c07a8e0a7ff",
+   "bytes": 409
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-application/debug-init-containers.md",
+   "sha256": "9ba39ad75be1775d25a5f9432cbb93702cb19fb63636ecaa9ed3253240a53249",
+   "bytes": 3376
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-application/debug-pods.md",
+   "sha256": "387851f607319187a0c82c93518a54840b899d24b387da5f26f7ad0233b4fb3a",
+   "bytes": 8231
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-application/debug-running-pod.md",
+   "sha256": "ec96ce1a6c370020a9162cae98aba5b1a04113365815613ecdb1f658cfa2e08f",
+   "bytes": 28330
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-application/debug-service.md",
+   "sha256": "76915e474e88fbedecbfe205fb45a85867ea4612453358eda73a330ec991262d",
+   "bytes": 23343
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-application/debug-statefulset.md",
+   "sha256": "58b7fd144331cdbcc9a939f62076a94a554385eca92c7fde3287e56c693c89d3",
+   "bytes": 1233
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-application/determine-reason-pod-failure.md",
+   "sha256": "b43a3dad47d2428042e5a5d2b32c586fa1b0504cdcdfd9513874b8bfce35f57d",
+   "bytes": 4998
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-application/get-shell-running-container.md",
+   "sha256": "1e9b6480bb5a79b38833add65628727c45a1a40b561ab277ec7a5c6ec31ddab1",
+   "bytes": 3210
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/_index.md",
+   "sha256": "ebf219562d6b8375f375809300447220b4c027bc404914cd14f2dfd77f9cb4e0",
+   "bytes": 13588
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/audit.md",
+   "sha256": "8886dbd0e43eb408967de225f511a0291321fc342b615fde45edff76daa0f3e6",
+   "bytes": 12710
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/crictl.md",
+   "sha256": "4adf161b2b98693283ff85a666f08ce86c91b6a7f570f4b2e74ed18142e10890",
+   "bytes": 7936
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/kubectl-node-debug.md",
+   "sha256": "04774e4f08b1c1009a77b65053de400dcd213ef6e9bea3f3b5a93a0e71af38ff",
+   "bytes": 3908
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/local-debugging.md",
+   "sha256": "c19d8845e64c402b968925c7ad06f2ae6a72ae89e6c973c1f157420c9774b5bf",
+   "bytes": 3750
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/monitor-node-health.md",
+   "sha256": "9678cc29151f9a085a2c1855496211ec79184e3b8e077c9f93d0195ba9aa3871",
+   "bytes": 7548
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
+   "sha256": "12ab7c4ebc55ec09691fa3b2dacaadca6659f7a590960a74dc8fa00dae042859",
+   "bytes": 9938
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/resource-usage-monitoring.md",
+   "sha256": "50f4ee11a26bf8c00a0018d6b4eb7e5c63c55318ddf92256ed416dcc70b8161f",
+   "bytes": 5412
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/topology.md",
+   "sha256": "6d83cb5e4733e2b982cf70b2a84fe9de04f1703c24ec6afe0da204eb1275c835",
+   "bytes": 6721
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/troubleshoot-kubectl.md",
+   "sha256": "643437a9234c139c9ddeed5dec2af4d822c7510bb3b7ef346d27be0aa142b421",
+   "bytes": 6076
+  },
+  {
+   "source": "kubernetes/tasks/debug/debug-cluster/windows.md",
+   "sha256": "42ccc936eb14fc9260a0945a819464f7da14309d787e01c3b32cb84613efb4c4",
+   "bytes": 7719
+  },
+  {
+   "source": "kubernetes/tasks/debug/logging/_index.md",
+   "sha256": "1b194d61ff0a186f88be1fcd2b5d22708249177614770afdd0d8e7bbea98e218",
+   "bytes": 536
+  },
+  {
+   "source": "kubernetes/tasks/debug/monitoring/_index.md",
+   "sha256": "a3298e98ec5a15f06e0f08ebbeba704ad15dd91721509505cba0e8381f5a7cbd",
+   "bytes": 464
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubectl/kubectl-plugins.md",
+   "sha256": "019a9bd07dc7ce9fb0186475b2befe7729637bbdd6f08101be6dbf96efdc086c",
+   "bytes": 14205
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/_index.md",
+   "sha256": "1a811089fb1f5fda4d359edc183ff2a994987e7ca7ef8d0f152251c93b4d3870",
+   "bytes": 158
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/configure-aggregation-layer.md",
+   "sha256": "4276610420f31984fdddac2c21ac090978a1c013b161d66543c7b7fd4c54b721",
+   "bytes": 17048
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/configure-multiple-schedulers.md",
+   "sha256": "a3380bf3f9198e606fe4b6b1a1e5945379bd18f719479d9c671c458b43a5c25e",
+   "bytes": 8740
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/custom-resources/_index.md",
+   "sha256": "7c308d594c56842d0138c77cbbba3ca9ce285569ee9ba07e7570d13debb659de",
+   "bytes": 50
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning.md",
+   "sha256": "4961f28ee65903ecce2a3470173d893f9e69c6cb715a1d445f2880f7c73bfd15",
+   "bytes": 42401
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/custom-resources/custom-resource-definitions.md",
+   "sha256": "d37529bbddfa122077c84f08b0ec6d5e1faca864a0b61ff0df87ec1fb8157d8f",
+   "bytes": 72698
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/http-proxy-access-api.md",
+   "sha256": "198407f51c8357833e30124837000f4710ec50188232b25cf3988d4141522471",
+   "bytes": 2017
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/setup-extension-api-server.md",
+   "sha256": "fe73d2843860dce89b0bbcb4d22ee3e80c56f166b5b104f0b6b462e078eda43f",
+   "bytes": 4433
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/setup-konnectivity.md",
+   "sha256": "593471bb64dede0603dcb52241ce10cf548f1f52b2a5167fa2ccc19412133cb6",
+   "bytes": 3996
+  },
+  {
+   "source": "kubernetes/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+   "sha256": "f7b537c89e0c354bdf992d71599bc719f950ad3035e15f6a5a27c92f043dbac2",
+   "bytes": 6118
+  },
+  {
+   "source": "kubernetes/tasks/inject-data-application/_index.md",
+   "sha256": "137ec43adb07753d13dcabc19da97b2c82bffeeb36860a9c24f0774f55cea0ea",
+   "bytes": 146
+  },
+  {
+   "source": "kubernetes/tasks/inject-data-application/define-command-argument-container.md",
+   "sha256": "f731b4526ec5284a0afa94f93b4f77b4977510cc3784209a8190e9d8d879624d",
+   "bytes": 3367
+  },
+  {
+   "source": "kubernetes/tasks/inject-data-application/define-environment-variable-container.md",
+   "sha256": "5fe30c5e7d5d24db4a783e92e5b7acfafd91c638ffc46501b16d8b26003c209a",
+   "bytes": 4507
+  },
+  {
+   "source": "kubernetes/tasks/inject-data-application/define-environment-variable-via-file.md",
+   "sha256": "d9ea9e69efe15cc334e3d4e7a091e25ba0abdf1faf66f60a763a65abb696b828",
+   "bytes": 4639
+  },
+  {
+   "source": "kubernetes/tasks/inject-data-application/define-interdependent-environment-variables.md",
+   "sha256": "b0ac1cdcc09a284d5bc305f2e34e2373e695ecea7caf58a82bdba9d17e5f28f6",
+   "bytes": 2921
+  },
+  {
+   "source": "kubernetes/tasks/inject-data-application/distribute-credentials-secure.md",
+   "sha256": "1b3df89759a8ad7b8f930f2cf8c9cf180a4fc9e8568d229844c9eea47c6fc96c",
+   "bytes": 12868
+  },
+  {
+   "source": "kubernetes/tasks/inject-data-application/downward-api-volume-expose-pod-information.md",
+   "sha256": "0dc3067bf6caf5e2dd7705ab1014b8e3a4bd6447b8551d159cf816317f80ffe0",
+   "bytes": 6928
+  },
+  {
+   "source": "kubernetes/tasks/inject-data-application/environment-variable-expose-pod-information.md",
+   "sha256": "304f2c51db872d7ee43dc65bd493e2d0103cd0b19c2744c7a2a0383b86d92182",
+   "bytes": 5586
+  },
+  {
+   "source": "kubernetes/tasks/job/_index.md",
+   "sha256": "142ed4e021c64d4a319b8039a506f9005877317d3252f3152bdf24e2ea31a577",
+   "bytes": 87
+  },
+  {
+   "source": "kubernetes/tasks/job/automated-tasks-with-cron-jobs.md",
+   "sha256": "2c5591423e6c00ce8fd120677437d90b240884706b442c319d079df88182721f",
+   "bytes": 3027
+  },
+  {
+   "source": "kubernetes/tasks/job/coarse-parallel-processing-work-queue.md",
+   "sha256": "7ab196759320eac6ccda6c6f31e448c8b267cfe2d8746337ccf7f2760b1e3bc9",
+   "bytes": 12032
+  },
+  {
+   "source": "kubernetes/tasks/job/fine-parallel-processing-work-queue.md",
+   "sha256": "cf6570d4821c80af8223e6c814d81bcca128557f3763bf7e9638a6aa513622c1",
+   "bytes": 8576
+  },
+  {
+   "source": "kubernetes/tasks/job/indexed-parallel-processing-static.md",
+   "sha256": "848368ee8d21739b40a7668e573cbb611829f398ad37701316cad9e15247dc19",
+   "bytes": 7136
+  },
+  {
+   "source": "kubernetes/tasks/job/job-with-pod-to-pod-communication.md",
+   "sha256": "7afba81cf3fef2433245370735f40106080754de3d9f8f4be836d0fd8c90f106",
+   "bytes": 4763
+  },
+  {
+   "source": "kubernetes/tasks/job/parallel-processing-expansion.md",
+   "sha256": "86a92968c694975079047f3e9380568e1dff4b819c223c890487a66cdb3ca46d",
+   "bytes": 9526
+  },
+  {
+   "source": "kubernetes/tasks/job/pod-failure-policy.md",
+   "sha256": "af4d9b00398e34f06d089da2a5e696dd068b6c639023f0d658f27f8f2a0738dc",
+   "bytes": 11173
+  },
+  {
+   "source": "kubernetes/tasks/manage-daemon/_index.md",
+   "sha256": "d4b675ee544a1f169c665e3eec76271242fba40a573bbc1cf99d637d223d6039",
+   "bytes": 150
+  },
+  {
+   "source": "kubernetes/tasks/manage-daemon/create-daemon-set.md",
+   "sha256": "cdf0614036e0db9a7ed32fa2046433c8df6bc511333bf8952af3325a43af96d8",
+   "bytes": 2602
+  },
+  {
+   "source": "kubernetes/tasks/manage-daemon/pods-some-nodes.md",
+   "sha256": "cde51455968be3f0e6bfb2f342dfec1e3a7e9e5f3cd1e8a3fa8389541f11d7a8",
+   "bytes": 2141
+  },
+  {
+   "source": "kubernetes/tasks/manage-daemon/rollback-daemon-set.md",
+   "sha256": "acf79459a1f5998a55b108199cf55904c52018a87144de39316c05937f08bf64",
+   "bytes": 4016
+  },
+  {
+   "source": "kubernetes/tasks/manage-daemon/update-daemon-set.md",
+   "sha256": "1fb651642523b9242be2a8669ff8178885918609e88f9edcdf7abab05a707ed6",
+   "bytes": 6174
+  },
+  {
+   "source": "kubernetes/tasks/manage-gpus/scheduling-gpus.md",
+   "sha256": "7fb76398ba775278c5a42adc6566d3649ceec6565445163f5cc2498a84d1b92f",
+   "bytes": 5114
+  },
+  {
+   "source": "kubernetes/tasks/manage-hugepages/scheduling-hugepages.md",
+   "sha256": "bcc49955fa23eba61eaa6d17b2798135f54e7ce9a3078bf16ed9a5f702aa66c9",
+   "bytes": 4083
+  },
+  {
+   "source": "kubernetes/tasks/manage-kubernetes-objects/_index.md",
+   "sha256": "fad63d7a65a0ce4f1971222583fbfbbf79d49f4ddc2b074be4ce93781800d731",
+   "bytes": 144
+  },
+  {
+   "source": "kubernetes/tasks/manage-kubernetes-objects/declarative-config.md",
+   "sha256": "560ecbd3d80a2d11f8d290bb6b18a1f5c2c1a2ceebc39a6c0c8284ff2686341e",
+   "bytes": 38527
+  },
+  {
+   "source": "kubernetes/tasks/manage-kubernetes-objects/imperative-command.md",
+   "sha256": "06b8238d457813463030abbca28b385b73c9be84a8b48a73ec8c08ae7d53ae49",
+   "bytes": 6679
+  },
+  {
+   "source": "kubernetes/tasks/manage-kubernetes-objects/imperative-config.md",
+   "sha256": "947b8459e2f3b87196fcead3f6022145b4e5062e53be5b00612fb5d67234c284",
+   "bytes": 5301
+  },
+  {
+   "source": "kubernetes/tasks/manage-kubernetes-objects/kustomization.md",
+   "sha256": "28b043ac41dfbc1918d73ef55da5024bd602124bc2eb627ab158f438fc4f6280",
+   "bytes": 24482
+  },
+  {
+   "source": "kubernetes/tasks/manage-kubernetes-objects/storage-version-migration.md",
+   "sha256": "c15747abc4e0638f144c5a088ede3b1d110031f16da226d9ecfed5eb0a4c600a",
+   "bytes": 11202
+  },
+  {
+   "source": "kubernetes/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch.md",
+   "sha256": "f7cbba7fe74d9d6ad0d1fd60aaa62d0c8010f94afc567140fb5cdfecbe32c283",
+   "bytes": 16017
+  },
+  {
+   "source": "kubernetes/tasks/network/_index.md",
+   "sha256": "1ece675851c32b35f5f0745006492a939b563c4b11d28c01aab653c6a44b2a13",
+   "bytes": 106
+  },
+  {
+   "source": "kubernetes/tasks/network/customize-hosts-file-for-pods.md",
+   "sha256": "b88c1f2db84f1c14b0d230a99f6a7d681713603ceaf6cfcdc685f1dbfe1f7b5d",
+   "bytes": 3661
+  },
+  {
+   "source": "kubernetes/tasks/network/extend-service-ip-ranges.md",
+   "sha256": "7e039a75301b070f6be5525284482a86ea0286499170ee304cf01ade9837aaac",
+   "bytes": 7291
+  },
+  {
+   "source": "kubernetes/tasks/network/reconfigure-default-service-ip-ranges.md",
+   "sha256": "e432797d29ee050f62ebf7365751465822328883ec0bdb9b6c87cec9abaf055f",
+   "bytes": 6210
+  },
+  {
+   "source": "kubernetes/tasks/network/validate-dual-stack.md",
+   "sha256": "9a0171f14e8f65327925f9332e3f1cd11d5879f8d17f15fdcb89c3d8adb79c32",
+   "bytes": 7854
+  },
+  {
+   "source": "kubernetes/tasks/run-application/_index.md",
+   "sha256": "d755bf9bfa56709307298c70268d2f5e65aa41d4e27273b04f5a711aa19d74f9",
+   "bytes": 116
+  },
+  {
+   "source": "kubernetes/tasks/run-application/access-api-from-pod.md",
+   "sha256": "e8761ba329c8383beed7711ea8b53aa348378a2ed7b105a9c26250bed10daf0f",
+   "bytes": 4592
+  },
+  {
+   "source": "kubernetes/tasks/run-application/configure-pdb.md",
+   "sha256": "145c16f63cb9a9b925e2ee077c31915d48f1906026d6193d5aaa906f7b95b7f8",
+   "bytes": 13521
+  },
+  {
+   "source": "kubernetes/tasks/run-application/delete-stateful-set.md",
+   "sha256": "bedc1a48c7e9604495afd4c5b744924ff93dc85e3536fea6260d50a9632cf277",
+   "bytes": 3068
+  },
+  {
+   "source": "kubernetes/tasks/run-application/force-delete-stateful-set-pod.md",
+   "sha256": "694dddb1affd73f84b639b91115eb368a9cd677ddb06c937f8a04214752ef59f",
+   "bytes": 5144
+  },
+  {
+   "source": "kubernetes/tasks/run-application/horizontal-pod-autoscale-walkthrough.md",
+   "sha256": "909833d9c50297e8e733c8438c59e0869df1161f084aa702f375592b27d9bd7d",
+   "bytes": 19430
+  },
+  {
+   "source": "kubernetes/tasks/run-application/run-replicated-stateful-application.md",
+   "sha256": "86b75361521632a7696ee181770d8ff8a7cc9442c79e674406d46a798097539d",
+   "bytes": 19150
+  },
+  {
+   "source": "kubernetes/tasks/run-application/run-single-instance-stateful-application.md",
+   "sha256": "321153fa1be6370a1080d5d5182f2700fe8e3914963252660fe1029afbf7d047",
+   "bytes": 6842
+  },
+  {
+   "source": "kubernetes/tasks/run-application/run-stateless-application-deployment.md",
+   "sha256": "acff7e08d666bc0f1bcb6585536ddeb99f8e2e6f304ec7e11f16cf2085704502",
+   "bytes": 4894
+  },
+  {
+   "source": "kubernetes/tasks/run-application/scale-deployment.md",
+   "sha256": "105a890582b705dc708f166ff74b3574116112f754d4f331a8cbb8056f622326",
+   "bytes": 6424
+  },
+  {
+   "source": "kubernetes/tasks/run-application/scale-stateful-set.md",
+   "sha256": "dd963d0fff2381e38e988317cff430ec441effbd710924011eda4d00b10354de",
+   "bytes": 3192
+  },
+  {
+   "source": "kubernetes/tasks/run-application/update-deployment-rolling.md",
+   "sha256": "4daa04153f44116329c176235e82078db7283c12de4916f2c44893a72d786fee",
+   "bytes": 8630
+  },
+  {
+   "source": "kubernetes/tasks/tls/_index.md",
+   "sha256": "737f24327b5c42cb536da7260750ad3fe05e8b9b728b11ab55dde3528f501cd8",
+   "bytes": 139
+  },
+  {
+   "source": "kubernetes/tasks/tls/certificate-issue-client-csr.md",
+   "sha256": "5695cb5f0ef0f0251f71293a0a00319c5a0d370049e14b68ac7efa47a99049e1",
+   "bytes": 7452
+  },
+  {
+   "source": "kubernetes/tasks/tls/certificate-rotation.md",
+   "sha256": "ae46e6b2cd16b62f10130165e0de332633cfd29dd33b794bf6c152d691f2d63e",
+   "bytes": 3086
+  },
+  {
+   "source": "kubernetes/tasks/tls/managing-tls-in-a-cluster.md",
+   "sha256": "aa7d75c0e5bad84e08055d397d648b6519f844f9defd4c61ea507c3d0a0cc93e",
+   "bytes": 12781
+  },
+  {
+   "source": "kubernetes/tasks/tls/manual-rotation-of-ca-certificates.md",
+   "sha256": "0ad9598f96537c331d8fda719f740dd5450eba53ea7ba03c1fe558aa491c6d4e",
+   "bytes": 8562
+  },
+  {
+   "source": "kubernetes/tasks/tools/_index.md",
+   "sha256": "5e589c84cae78ef4338826d8b7aeef5168ac062093c1b4f32547ca9df0dd28f2",
+   "bytes": 3034
+  },
+  {
+   "source": "kubernetes/tasks/tools/included/_index.md",
+   "sha256": "ef5255ffcbceaa34ac4c8d2934979fafefbba927af39f051e789c2570a44d47a",
+   "bytes": 205
+  },
+  {
+   "source": "kubernetes/tasks/tools/included/kubectl-convert-overview.md",
+   "sha256": "05b884cf8c360e66174f178b01ebc25c39f785d7731489297f378247f5f3266f",
+   "bytes": 628
+  },
+  {
+   "source": "kubernetes/tasks/tools/included/kubectl-whats-next.md",
+   "sha256": "118c2126544bc04d09aac303bcb644eb82a3d410c8ff28d1deedd0a3864733ff",
+   "bytes": 782
+  },
+  {
+   "source": "kubernetes/tasks/tools/included/optional-kubectl-configs-bash-linux.md",
+   "sha256": "fa8e5306106ebc9f340d718bfdad024dea4ec3816b549cbece3400f05f309322",
+   "bytes": 2524
+  },
+  {
+   "source": "kubernetes/tasks/tools/included/optional-kubectl-configs-bash-mac.md",
+   "sha256": "401a76bdb7aef22dc2a3c871a924b67299c21ea8381bfddf58a50d5a55490716",
+   "bytes": 3590
+  },
+  {
+   "source": "kubernetes/tasks/tools/included/optional-kubectl-configs-fish.md",
+   "sha256": "2dd65f8cbf96b4c2c6f0e45e932d5e10d7b266fc495b1abf94a97a163bff169e",
+   "bytes": 675
+  },
+  {
+   "source": "kubernetes/tasks/tools/included/optional-kubectl-configs-pwsh.md",
+   "sha256": "b972796ac70a0094c59e5a199c97fde1b7f5e54bcaefe2df74801e87c1ca6dab",
+   "bytes": 874
+  },
+  {
+   "source": "kubernetes/tasks/tools/included/optional-kubectl-configs-zsh.md",
+   "sha256": "12adfd8a47948022b85e9b6aa9d7fee9550fc6fa7d04a120acd63ab6820e9041",
+   "bytes": 814
+  },
+  {
+   "source": "kubernetes/tasks/tools/included/verify-kubectl.md",
+   "sha256": "e6a8109b392925eb2051c653f84349bab84ab33db65754dfc628da6926ddc17a",
+   "bytes": 2135
+  },
+  {
+   "source": "kubernetes/tasks/tools/install-kubectl-linux.md",
+   "sha256": "490987f0d952636c7340b2e6eb494650105d393cebbe59239f48134bd63bcc2c",
+   "bytes": 12997
+  },
+  {
+   "source": "kubernetes/tasks/tools/install-kubectl-macos.md",
+   "sha256": "5e20bf6ef9960a205db0f64376bd2f0be396477da44b27b6d1ec61a9e5b366fe",
+   "bytes": 8475
+  },
+  {
+   "source": "kubernetes/tasks/tools/install-kubectl-windows.md",
+   "sha256": "2cce7418a6fc6aed9affb421f9b3e722a9a73facea42b7f90892ebf9495a9a76",
+   "bytes": 6477
+  },
+  {
+   "source": "kubernetes/reference/glossary/addons.md",
+   "sha256": "dcf40c87aa3bfb057f4cd0d68eaf6a37de70287fbf4ac7e61bc8cac11fbed484",
+   "bytes": 410
+  },
+  {
+   "source": "kubernetes/reference/glossary/admission-controller.md",
+   "sha256": "69f9595d88459f868ccda529594272f11db6ee8efd07b60db0bd8cf74b06d382",
+   "bytes": 784
+  },
+  {
+   "source": "kubernetes/reference/glossary/affinity.md",
+   "sha256": "02ac52beb884d921b72d1d06198bd91a397fdecd707e86f9cae8fc80ad00809c",
+   "bytes": 930
+  },
+  {
+   "source": "kubernetes/reference/glossary/aggregation-layer.md",
+   "sha256": "3138ae20c2153dd4f65d320ed5e6f9e5e9af7de8cc09a587d6fd40f9e0635cba",
+   "bytes": 678
+  },
+  {
+   "source": "kubernetes/reference/glossary/annotation.md",
+   "sha256": "6534c42f6c5b5a3e627167057deced89d722f56dc0376809e4e2e3ff9c9fb9c7",
+   "bytes": 595
+  },
+  {
+   "source": "kubernetes/reference/glossary/api-eviction.md",
+   "sha256": "9215b89dad6fbe22dc2216fac557541e248d67b2d1e4e6af2eeadd8f23501a4c",
+   "bytes": 1224
+  },
+  {
+   "source": "kubernetes/reference/glossary/api-group.md",
+   "sha256": "2fd49f11021094cae1222a3212958891b264be11fc90e3eeb683552925ddb834",
+   "bytes": 801
+  },
+  {
+   "source": "kubernetes/reference/glossary/api-resource.md",
+   "sha256": "9f0c0b7e8b265cb46b322c871e1f09b9f12441a2c715c62eaf186a44ee41db18",
+   "bytes": 743
+  },
+  {
+   "source": "kubernetes/reference/glossary/app-container.md",
+   "sha256": "5938778e5f3244a015dd286f79d0b78619d93d792a0889aadd80d3a97261202f",
+   "bytes": 818
+  },
+  {
+   "source": "kubernetes/reference/glossary/application-architect.md",
+   "sha256": "887b53aa7cefa42fe59bc3aa335a603140480ab78b0e3365205289db298d35a0",
+   "bytes": 500
+  },
+  {
+   "source": "kubernetes/reference/glossary/application-developer.md",
+   "sha256": "8bd5ac107996074233bc5d8ddd466362080108a48cfe83333abfb0f8e532402c",
+   "bytes": 401
+  },
+  {
+   "source": "kubernetes/reference/glossary/applications.md",
+   "sha256": "c0290abf7fac4232c92cf8fe88e54e645640e5dd1a8157bbba2bd7ea8f722a7c",
+   "bytes": 217
+  },
+  {
+   "source": "kubernetes/reference/glossary/approver.md",
+   "sha256": "0db6338d3e904fb2182be8d7b6c0da2a85db5c01e735fe3b6b9ce1e60a8ac75c",
+   "bytes": 684
+  },
+  {
+   "source": "kubernetes/reference/glossary/cadvisor.md",
+   "sha256": "545996ecbd978533d3646c54fc9cc37310696f538728f5f9b20e083a6122a7c0",
+   "bytes": 850
+  },
+  {
+   "source": "kubernetes/reference/glossary/cdi.md",
+   "sha256": "073f5f8391463c1ebf1920b6875dcb2c7ece59250aa1e0fcbfdc6382d6f46198",
+   "bytes": 808
+  },
+  {
+   "source": "kubernetes/reference/glossary/cel.md",
+   "sha256": "a244706bc04d9b39aa8057285e8f6f0057d4db22034a2219a4ec908d7138a1c9",
+   "bytes": 759
+  },
+  {
+   "source": "kubernetes/reference/glossary/certificate.md",
+   "sha256": "b237c7c46f21ec2ddc603cf709672d73b76715b93847eaffe5140995e69c1a4e",
+   "bytes": 493
+  },
+  {
+   "source": "kubernetes/reference/glossary/cgroup.md",
+   "sha256": "910aaeb8504e24030724b4ba2eb770aa5e13cf3ce638e54d81241334f3903ae3",
+   "bytes": 514
+  },
+  {
+   "source": "kubernetes/reference/glossary/cidr.md",
+   "sha256": "4a03956a7a4d245d37dc8f6a5b835ee07390a6ce29990ddc645b62be3191fe31",
+   "bytes": 736
+  },
+  {
+   "source": "kubernetes/reference/glossary/cla.md",
+   "sha256": "6bc5d3b69fd55de7aaa55564630f6c9e8b0761f89e6e2cf7458d5dbc40fa1d82",
+   "bytes": 542
+  },
+  {
+   "source": "kubernetes/reference/glossary/cloud-controller-manager.md",
+   "sha256": "f788ee206c01f1f756b841755fda588d60979afc98860f0bac921dece9a9e8ef",
+   "bytes": 883
+  },
+  {
+   "source": "kubernetes/reference/glossary/cloud-provider.md",
+   "sha256": "62663cb3467bd0b4a13a19e1021c5a883d78709329ee1b8ecfb9ed210b0d4e2b",
+   "bytes": 1026
+  },
+  {
+   "source": "kubernetes/reference/glossary/cluster-architect.md",
+   "sha256": "36c722e0c9e36b6f20ddbe6eb0d67febe32fce101f2812466f8686ac7b122e73",
+   "bytes": 425
+  },
+  {
+   "source": "kubernetes/reference/glossary/cluster-infrastructure.md",
+   "sha256": "447a294763e44cb724c342f194d0065b10f9844ff0e069d1c782b9ea38ed6362",
+   "bytes": 309
+  },
+  {
+   "source": "kubernetes/reference/glossary/cluster-operations.md",
+   "sha256": "4a2f5bf3c7ed823ef9b18c2108e97f785feaeaf20bdade428ecf1fc303643688",
+   "bytes": 566
+  },
+  {
+   "source": "kubernetes/reference/glossary/cluster-operator.md",
+   "sha256": "264d7d24acbf1fa4df36a26b4c3686422b8ee1043243ef1d0cee4abae2bbce95",
+   "bytes": 544
+  },
+  {
+   "source": "kubernetes/reference/glossary/cluster.md",
+   "sha256": "58f307347ef94725978b8f3bff31b57a9483c42599b32019e7d459de8c2b0b02",
+   "bytes": 849
+  },
+  {
+   "source": "kubernetes/reference/glossary/cncf.md",
+   "sha256": "6f05564beb7efa8d54535f0f3f7441f54d664551a54efffa89f9674947374a01",
+   "bytes": 588
+  },
+  {
+   "source": "kubernetes/reference/glossary/cni.md",
+   "sha256": "bd280bc533581249ba423147cadb4fd8ca6a4b5d3bb5b304e0ad3cdde01e5605",
+   "bytes": 575
+  },
+  {
+   "source": "kubernetes/reference/glossary/code-contributor.md",
+   "sha256": "61b38476b747865d66b9c3c5fdb79b41013ed2a12c6fbee530bac2c094fd2f37",
+   "bytes": 576
+  },
+  {
+   "source": "kubernetes/reference/glossary/condition.md",
+   "sha256": "7a659424264e396963e61f17df38e05a98740bd606771a87757ebc107947d72c",
+   "bytes": 771
+  },
+  {
+   "source": "kubernetes/reference/glossary/configmap.md",
+   "sha256": "bc9bcbba306a03efd6f003c192795e0cf0c858eb03683899ba1c3da94401a540",
+   "bytes": 803
+  },
+  {
+   "source": "kubernetes/reference/glossary/container-env-variables.md",
+   "sha256": "6ab7b3200e915800e2b4a6468b3991281a0a697685fb2fab39c3f3765f4b744f",
+   "bytes": 849
+  },
+  {
+   "source": "kubernetes/reference/glossary/container-lifecycle-hooks.md",
+   "sha256": "145df08af8ffc724a365136d5fc5a57d05560621a6f9765975f604a81cf2ff91",
+   "bytes": 685
+  },
+  {
+   "source": "kubernetes/reference/glossary/container-runtime.md",
+   "sha256": "dd609adc1ead3a059d5f36461b359f927c7aea84562c53e9f1846c0661a43b6e",
+   "bytes": 795
+  },
+  {
+   "source": "kubernetes/reference/glossary/container.md",
+   "sha256": "fff8b17a40e8888e55b12762b2d3d05878253658182b1564eb37fc246278ad8c",
+   "bytes": 704
+  },
+  {
+   "source": "kubernetes/reference/glossary/containerd.md",
+   "sha256": "f9d43dbdcaa238dda9b45d1ec5eaf02de9c251eac6e46c9ad6ec31087fa5ba53",
+   "bytes": 546
+  },
+  {
+   "source": "kubernetes/reference/glossary/contributor.md",
+   "sha256": "42f3738f65cf045be2b194faf6968ea3cb7fb268d02348793605d57e46db7d47",
+   "bytes": 504
+  },
+  {
+   "source": "kubernetes/reference/glossary/control-plane.md",
+   "sha256": "bc340d10969dde68cb92401e2cff1f1fdb2da70b045e4825e4649d471588305e",
+   "bytes": 1066
+  },
+  {
+   "source": "kubernetes/reference/glossary/controller.md",
+   "sha256": "3901685470e210e2040a6ca6472e4951f9bfbc65282914355408f4081dd4457b",
+   "bytes": 1128
+  },
+  {
+   "source": "kubernetes/reference/glossary/cri-o.md",
+   "sha256": "b0105d06817a3ab33150e6dc78792060e2c9d8ff3b904eee0d40eeb082f4dd4c",
+   "bytes": 763
+  },
+  {
+   "source": "kubernetes/reference/glossary/cri.md",
+   "sha256": "ebe9cb48af26675e3c5861caae1d04794a86f651957d4a1e4d54ea0ba173c03d",
+   "bytes": 717
+  },
+  {
+   "source": "kubernetes/reference/glossary/cronjob.md",
+   "sha256": "8d946574b6c6e32e5ea665f8eb2987df097e15ac1c776855464d874a7373513f",
+   "bytes": 460
+  },
+  {
+   "source": "kubernetes/reference/glossary/csi.md",
+   "sha256": "cf8e1f361bb9e1559016f48204273ad7b9ba1fbfe9e62471a541973bcec7a1f3",
+   "bytes": 963
+  },
+  {
+   "source": "kubernetes/reference/glossary/customresourcedefinition.md",
+   "sha256": "3c383f6bb53a138f27b57cea86b4c416cb8b472e4975013dd5d5abb5cbc8cd8f",
+   "bytes": 730
+  },
+  {
+   "source": "kubernetes/reference/glossary/daemonset.md",
+   "sha256": "7e5deb2d7892b31becee07d644e5ce7da9569920cc8a0da81d8d629902b0f203",
+   "bytes": 576
+  },
+  {
+   "source": "kubernetes/reference/glossary/data-plane.md",
+   "sha256": "9e99b947052c495b9f4ab1a220de86dfee54362bebe8db2573fdac39566782b5",
+   "bytes": 366
+  },
+  {
+   "source": "kubernetes/reference/glossary/deployment.md",
+   "sha256": "ef963d750598cc2bcac0d139f322189bdcc2b5f52b52472f7d7614f7d9d73f90",
+   "bytes": 630
+  },
+  {
+   "source": "kubernetes/reference/glossary/developer.md",
+   "sha256": "28baee435c57af9728a0d545080dd75b4fe5535cd7d672d241db73ba840a3601",
+   "bytes": 567
+  },
+  {
+   "source": "kubernetes/reference/glossary/device-plugin.md",
+   "sha256": "4b0109434ed5d55a1e6f0004440e07c448821a952e1b48433ff7b171fb99eb18",
+   "bytes": 1100
+  },
+  {
+   "source": "kubernetes/reference/glossary/device.md",
+   "sha256": "f628fb52ca831be69c8f951ebd1b48a7f8c55d02ad415b62924a9dc97527e26e",
+   "bytes": 712
+  },
+  {
+   "source": "kubernetes/reference/glossary/deviceclass.md",
+   "sha256": "6436367b70308ae15d977be53a3697fe42e9df72c137736d791d1766a2933fdc",
+   "bytes": 855
+  },
+  {
+   "source": "kubernetes/reference/glossary/disruption.md",
+   "sha256": "ecb6c7a3a4e13d521721b9c0244c6cc9b3c7f9cae069e9f5aa9bb4495d2817a5",
+   "bytes": 890
+  },
+  {
+   "source": "kubernetes/reference/glossary/docker.md",
+   "sha256": "7cdb9cdd85141d96b7fab07880c582db80c4493a416f8019f99d962396788828",
+   "bytes": 742
+  },
+  {
+   "source": "kubernetes/reference/glossary/dockershim.md",
+   "sha256": "efe463ad0f020c6af02cc4e8fc14a3a8a5eb64e07d312d451dc8b029e300b516",
+   "bytes": 606
+  },
+  {
+   "source": "kubernetes/reference/glossary/downstream.md",
+   "sha256": "4cf636cf898a15a19f686a2f9dceca8dd118ba1613ad3415debc7cbd1bebd7bb",
+   "bytes": 780
+  },
+  {
+   "source": "kubernetes/reference/glossary/downward-api.md",
+   "sha256": "acd8f628ec7c73651441f2f003546ea10731d398f80661d04005ff80b2f08618",
+   "bytes": 1177
+  },
+  {
+   "source": "kubernetes/reference/glossary/dra.md",
+   "sha256": "61ce9f750cc8307597d63378e4e57136380c87da884500c836b7c3a12c706bff",
+   "bytes": 741
+  },
+  {
+   "source": "kubernetes/reference/glossary/drain.md",
+   "sha256": "b912cd7825d2a61759f66ae1c5431d68e7ab8a03f243bc22399e72351f94df91",
+   "bytes": 882
+  },
+  {
+   "source": "kubernetes/reference/glossary/duration.md",
+   "sha256": "a37b17ce9611a3cb5523ee3c771814fac95fa09acb509e958aeb236dbc5e22f2",
+   "bytes": 772
+  },
+  {
+   "source": "kubernetes/reference/glossary/dynamic-volume-provisioning.md",
+   "sha256": "1cdc6a2ec0a05dd0ea917fb3dc258c47873ead52001afff7942028f663622592",
+   "bytes": 864
+  },
+  {
+   "source": "kubernetes/reference/glossary/endpoint-slice.md",
+   "sha256": "a7fe967de150e734fd4fface36de1e57a07d5a9f7dcae5afaf184055b98bc808",
+   "bytes": 1007
+  },
+  {
+   "source": "kubernetes/reference/glossary/endpoint.md",
+   "sha256": "87e75e6b56d016d42dfbb076f904226de284cc0758077a14622f9f548649daa1",
+   "bytes": 643
+  },
+  {
+   "source": "kubernetes/reference/glossary/ephemeral-container.md",
+   "sha256": "22c28d8c1836cf0f8e7cc1469c10b42b52c9180adafb31562ddbc410ebc84cde",
+   "bytes": 822
+  },
+  {
+   "source": "kubernetes/reference/glossary/etcd.md",
+   "sha256": "192b430705c8f32688fdf65fad9ad32381ec2ba4a836da38d94e913999b45aef",
+   "bytes": 675
+  },
+  {
+   "source": "kubernetes/reference/glossary/event.md",
+   "sha256": "f00b5fa6ceb0c3f877380ba46b96a7ffa95424b892aaf0dc93fcf816a0085af5",
+   "bytes": 856
+  },
+  {
+   "source": "kubernetes/reference/glossary/eviction.md",
+   "sha256": "172971997bb2ef273fad0369907bd815e3046e12a06a7a6b84c8a282018d46d0",
+   "bytes": 458
+  },
+  {
+   "source": "kubernetes/reference/glossary/extensions.md",
+   "sha256": "e6353177b4df2bc1992743fd9aa4a9b39ea6ae161ddb6596ab017ec8ff06dd8a",
+   "bytes": 703
+  },
+  {
+   "source": "kubernetes/reference/glossary/feature-gates.md",
+   "sha256": "740698b28f2f3a29c31a4b0a7c64634f5c6b02d27f0032213bac1b564e85b989",
+   "bytes": 782
+  },
+  {
+   "source": "kubernetes/reference/glossary/finalizer.md",
+   "sha256": "cdf00e51faa11733e015a8984b561f8cf06682de5da6806045bc5a9696a0f875",
+   "bytes": 1578
+  },
+  {
+   "source": "kubernetes/reference/glossary/flexvolume.md",
+   "sha256": "ba30a0f510077058ef935f4345188cac0bd7078a63269cba6f9b8ffc4512e652",
+   "bytes": 1333
+  },
+  {
+   "source": "kubernetes/reference/glossary/garbage-collection.md",
+   "sha256": "aeb1483848bab6ba3eaaa484f03a9a3ead60c50aa977fa8bff604ef03a144364",
+   "bytes": 872
+  },
+  {
+   "source": "kubernetes/reference/glossary/gateway.md",
+   "sha256": "122412e8af6b3d1978cf62e1f75c6a5bc0dead4c2e081bf77694179df0add735",
+   "bytes": 444
+  },
+  {
+   "source": "kubernetes/reference/glossary/group-version-resource.md",
+   "sha256": "bcb85c79dba9ecadcfdd6929dded34fdeb3e80a4b4619c793bad44cd6d99b284",
+   "bytes": 768
+  },
+  {
+   "source": "kubernetes/reference/glossary/helm-chart.md",
+   "sha256": "d6ba6da0cfd4b0a937eecb4a3fbafded236f3cb4116eb0f09d25137696e945dc",
+   "bytes": 592
+  },
+  {
+   "source": "kubernetes/reference/glossary/horizontal-pod-autoscaler.md",
+   "sha256": "61687e8e89fa218ebf99fb8524d34a4df3fdd7fa7dec033510195c74e6c99566",
+   "bytes": 938
+  },
+  {
+   "source": "kubernetes/reference/glossary/host-aliases.md",
+   "sha256": "5c37ee17b77ee4e2348999b011fcc083a6b8265e2291e9a5bee572f886b0cc23",
+   "bytes": 708
+  },
+  {
+   "source": "kubernetes/reference/glossary/image.md",
+   "sha256": "9156098c12200e5322181c9e7afa9415e02fb223946fdaf3c82ddc0445bec751",
+   "bytes": 572
+  },
+  {
+   "source": "kubernetes/reference/glossary/immutable-infrastructure.md",
+   "sha256": "931949ac6583cec69ea21ec4d483197e574385f2938c548b95ffbefce43c73f1",
+   "bytes": 1492
+  },
+  {
+   "source": "kubernetes/reference/glossary/index.md",
+   "sha256": "7dd0a29495b3b2e0539e96ca16a9262163c207c39b9a0745bbc62aed14cccfbb",
+   "bytes": 213
+  },
+  {
+   "source": "kubernetes/reference/glossary/infrastructure-resource.md",
+   "sha256": "5503a0b0b0e4dcccd355a447154e2567888b4d6a3687fa29c8eb0a0ea0570589",
+   "bytes": 1293
+  },
+  {
+   "source": "kubernetes/reference/glossary/ingress.md",
+   "sha256": "d8ae6a144e5526c4516ea4fe030df4aaffadab23b0d0032916be7e6f120392ed",
+   "bytes": 445
+  },
+  {
+   "source": "kubernetes/reference/glossary/init-container.md",
+   "sha256": "428ba3e9bd1f620846705ad89cff9ec48e15089b0c7a6f391dd8dfdd647e276a",
+   "bytes": 934
+  },
+  {
+   "source": "kubernetes/reference/glossary/istio.md",
+   "sha256": "299bab35f2ff3c8c52aed9ac38bf92b33b0066ca810691bb718e02ef2cd964ee",
+   "bytes": 864
+  },
+  {
+   "source": "kubernetes/reference/glossary/job.md",
+   "sha256": "291c47006c2b4b1783a224457383195f3cdb5ec3eec66372d5ce6fe525fc0077",
+   "bytes": 477
+  },
+  {
+   "source": "kubernetes/reference/glossary/jwt.md",
+   "sha256": "b36e41e73b745b9f31310b858a819769deae6022261a83b742fb6b0d6cfa6fce",
+   "bytes": 478
+  },
+  {
+   "source": "kubernetes/reference/glossary/kops.md",
+   "sha256": "d29b2ea8ab578552dce151c0a387572c3ab2a3399c785663d3899bea4a3b3067",
+   "bytes": 1049
+  },
+  {
+   "source": "kubernetes/reference/glossary/kube-apiserver.md",
+   "sha256": "f00d4585f40c598a4351452339256833beaac09aab537f0ca52dec266ee9650e",
+   "bytes": 780
+  },
+  {
+   "source": "kubernetes/reference/glossary/kube-controller-manager.md",
+   "sha256": "9a65b405c34471f032a82fe1364487e846702f92625818c64cd39abe62746c6b",
+   "bytes": 594
+  },
+  {
+   "source": "kubernetes/reference/glossary/kube-proxy.md",
+   "sha256": "ac3185478aa7bf2d7057a38304d93d02654dd929522b56315b81455ad5544128",
+   "bytes": 832
+  },
+  {
+   "source": "kubernetes/reference/glossary/kube-scheduler.md",
+   "sha256": "b27e62dc2876a209aa5c6de76a0bf240c49960b824f9e4d86d4d8836b334ff2a",
+   "bytes": 838
+  },
+  {
+   "source": "kubernetes/reference/glossary/kubeadm.md",
+   "sha256": "75044b336a07f9b7445362b44c4fc33d782427d1dbbbbea4806d4d1879ec7eb9",
+   "bytes": 436
+  },
+  {
+   "source": "kubernetes/reference/glossary/kubectl.md",
+   "sha256": "e31debcd5d86da288b1f07b0c6a20debd9ff29256cf5d01c8d385427bc1ad17a",
+   "bytes": 620
+  },
+  {
+   "source": "kubernetes/reference/glossary/kubelet.md",
+   "sha256": "b4280161f9233614017ccf36fc74979dacc6b00f876591650be4552678b1188e",
+   "bytes": 811
+  },
+  {
+   "source": "kubernetes/reference/glossary/kubernetes-api.md",
+   "sha256": "92d9da0909314221bd6a5817382caf74f24882894ac414740cd105013dd77f8e",
+   "bytes": 774
+  },
+  {
+   "source": "kubernetes/reference/glossary/label.md",
+   "sha256": "71e6c35698bd830a2964958e571ee3c992d8740603c1c0d6ad95fd9e3d286724",
+   "bytes": 505
+  },
+  {
+   "source": "kubernetes/reference/glossary/limitrange.md",
+   "sha256": "5a2fc9af1626bcef10760115700317ac7e7886e5c66e8c5bc6aa18ed400c05ff",
+   "bytes": 940
+  },
+  {
+   "source": "kubernetes/reference/glossary/logging.md",
+   "sha256": "b2a1d8d683acbc67346c48587f3b2a0f6eacf22d3185758c03b3c4aeed3d331f",
+   "bytes": 548
+  },
+  {
+   "source": "kubernetes/reference/glossary/managed-service.md",
+   "sha256": "ae52cc7474784c96d2c155039464646cb328ed716b1d5a2df90abb343e8b7914",
+   "bytes": 402
+  },
+  {
+   "source": "kubernetes/reference/glossary/manifest.md",
+   "sha256": "35ec90f27b37d0cfff5c82fcdf3da6ace80bf83b00d576c6f02b99f91f6b805a",
+   "bytes": 458
+  },
+  {
+   "source": "kubernetes/reference/glossary/master.md",
+   "sha256": "f11db473b9e2b52f5d5a492cf9bd3eb0504d2e53724c1f961c7668bc2f7472d8",
+   "bytes": 759
+  },
+  {
+   "source": "kubernetes/reference/glossary/member.md",
+   "sha256": "3c9a98cb0670cc6a8ebac9f86672d2c5552b8ce35ec085d56068e03a77f2747c",
+   "bytes": 571
+  },
+  {
+   "source": "kubernetes/reference/glossary/minikube.md",
+   "sha256": "87eeba57000fc2026fffb1be3468015b6e543f3db0eae601a00fadeaacbba27e",
+   "bytes": 423
+  },
+  {
+   "source": "kubernetes/reference/glossary/mirror-pod.md",
+   "sha256": "9a947615111e005a89d8b4f67281e918c2f044b8d128d71a359d7f0ebc4694ff",
+   "bytes": 708
+  },
+  {
+   "source": "kubernetes/reference/glossary/mixed-version-proxy.md",
+   "sha256": "608e1b3fca41dc231f927424101126f90798cdd43ae6222f8da79dfe89ed6f8c",
+   "bytes": 853
+  },
+  {
+   "source": "kubernetes/reference/glossary/name.md",
+   "sha256": "269eaa52777f1047d3458bb2d15812b5cb558409efe5c73ea51896a2a1cb2741",
+   "bytes": 564
+  },
+  {
+   "source": "kubernetes/reference/glossary/namespace.md",
+   "sha256": "bcedbfe6230afde5e14af36a6a2a6f28225c06ecfcfdf78c6446e5a031f840a9",
+   "bytes": 878
+  },
+  {
+   "source": "kubernetes/reference/glossary/network-policy.md",
+   "sha256": "3038a4df4e629ca7cd1efa119a21d10dcab57ac4d96d4ebc7317096b8e298015",
+   "bytes": 1033
+  },
+  {
+   "source": "kubernetes/reference/glossary/node-pressure-eviction.md",
+   "sha256": "9b89c64100d30a3d321a7db5c0e0b743bdef8c980d46f399f4a9ac5258b0dab7",
+   "bytes": 967
+  },
+  {
+   "source": "kubernetes/reference/glossary/node.md",
+   "sha256": "3204188639956fccc6b6ef6d649a3a58b7854901e54536f63606f5fa48b7d988",
+   "bytes": 804
+  },
+  {
+   "source": "kubernetes/reference/glossary/object.md",
+   "sha256": "2f1c7336da240e581df30dc173cb7375025e9d4b5056302b498c7752f99a54a0",
+   "bytes": 878
+  },
+  {
+   "source": "kubernetes/reference/glossary/operator-pattern.md",
+   "sha256": "bf9d9b67f6e81fd13e8210a5ab16f3c6a75016a4caa670451a901c28288a3a80",
+   "bytes": 735
+  },
+  {
+   "source": "kubernetes/reference/glossary/persistent-volume-claim.md",
+   "sha256": "d2f197dab3c212f7d9812afd4a6e55b81258b739fc568a960e4036a0015abdf6",
+   "bytes": 865
+  },
+  {
+   "source": "kubernetes/reference/glossary/persistent-volume.md",
+   "sha256": "8ca22e5d2399bac495b3f065f4a357f2dd9b0683d92e57f60bfb51d044b20893",
+   "bytes": 876
+  },
+  {
+   "source": "kubernetes/reference/glossary/platform-developer.md",
+   "sha256": "a88bcce2107c7021e6fea7bb0636c30c1039221e3c1786b06b08bbbe3f329b33",
+   "bytes": 891
+  },
+  {
+   "source": "kubernetes/reference/glossary/pod-disruption-budget.md",
+   "sha256": "d04da29d0ebabac2b8fa686a0e566590a7eee7cf3dfd94a34fa7408bc2d896ae",
+   "bytes": 767
+  },
+  {
+   "source": "kubernetes/reference/glossary/pod-disruption.md",
+   "sha256": "8c6e0718fb1d7ba55906844d0dd1fa43560a268eeead9009dd0d142e5a6de228",
+   "bytes": 751
+  },
+  {
+   "source": "kubernetes/reference/glossary/pod-lifecycle.md",
+   "sha256": "9d4f2e66ab5e34d4bba366a26cb189fc273ea7ae712c430d13abe7e00dec6acc",
+   "bytes": 708
+  },
+  {
+   "source": "kubernetes/reference/glossary/pod-priority.md",
+   "sha256": "f7294061a9a2a871f89ba288209706fe21cafb6639d6121b8ce8827a128cb037",
+   "bytes": 609
+  },
+  {
+   "source": "kubernetes/reference/glossary/pod-security-policy.md",
+   "sha256": "fe6be36833dd323afcb50a8dfc88764d80e7cb0d52f2cab4787c73280364b563",
+   "bytes": 566
+  },
+  {
+   "source": "kubernetes/reference/glossary/pod-template.md",
+   "sha256": "6f052632825337be7037aeb114548574ebd4e6c924a4afbdfe75a9f2be9d9075",
+   "bytes": 1100
+  },
+  {
+   "source": "kubernetes/reference/glossary/pod.md",
+   "sha256": "3a04f5d8c55bd87d56fb69c1c425432dba8d7dc7e588b82bb15a71bc626574a1",
+   "bytes": 600
+  },
+  {
+   "source": "kubernetes/reference/glossary/podgroup.md",
+   "sha256": "47d2c1e5d1eecc31678104a4b7a3ab5b4ef2037c08032577ba25b823fac99310",
+   "bytes": 563
+  },
+  {
+   "source": "kubernetes/reference/glossary/preemption.md",
+   "sha256": "659c651f8afbe6006c2895e5cb56fcb22e407f3d547b5891a7e4845c2d5a9b72",
+   "bytes": 714
+  },
+  {
+   "source": "kubernetes/reference/glossary/priority-class.md",
+   "sha256": "9f851a2cead1c2f72ad83c4e731c45d48e2ac3338ab06287cfab97176e96b9fd",
+   "bytes": 775
+  },
+  {
+   "source": "kubernetes/reference/glossary/probe.md",
+   "sha256": "d53a953926374d521cf1342b613966a380d090016be6648a8053d45480492e62",
+   "bytes": 558
+  },
+  {
+   "source": "kubernetes/reference/glossary/proxy.md",
+   "sha256": "d7cff1055234408ed09c6d5173cdbe34d2f066e0736e02b4af6338769ee4af6e",
+   "bytes": 867
+  },
+  {
+   "source": "kubernetes/reference/glossary/qos-class.md",
+   "sha256": "88e328591c3422f8e5ce270fc1f19b4a83faebaa4f057736f328d6147344ea7d",
+   "bytes": 896
+  },
+  {
+   "source": "kubernetes/reference/glossary/quantity.md",
+   "sha256": "3dc1c2a91406ed8bf3b307176d81a8f4720f460c0dea943826b22902685a07e3",
+   "bytes": 1115
+  },
+  {
+   "source": "kubernetes/reference/glossary/rbac.md",
+   "sha256": "4e732c1bf6c9b20c51870774e78f9ec6de63b8cd5d387b9a2a424e534f3f0ab8",
+   "bytes": 910
+  },
+  {
+   "source": "kubernetes/reference/glossary/replica-set.md",
+   "sha256": "f443b91d9d0e21304d64995d6959c723efe9effd2b484c92d963b1117acdf035",
+   "bytes": 608
+  },
+  {
+   "source": "kubernetes/reference/glossary/replica.md",
+   "sha256": "3c4e24b2bc217bb0f47671f5e535764cb485556c5802bbc0ef43144d5909a3f3",
+   "bytes": 950
+  },
+  {
+   "source": "kubernetes/reference/glossary/replication-controller.md",
+   "sha256": "b0e51341fd83c219d28b3badaaa2e3b255d0c0deb50a832ebcee59d5d8ddf182",
+   "bytes": 761
+  },
+  {
+   "source": "kubernetes/reference/glossary/resource-quota.md",
+   "sha256": "3bde5dc178b58c35adfd43ef2e17504989760221128beea8e3643180a5bfb112",
+   "bytes": 748
+  },
+  {
+   "source": "kubernetes/reference/glossary/resourceclaim.md",
+   "sha256": "a972b78d0316487594c29d7757e1c52772dc19835deae964f86525c1223c3f72",
+   "bytes": 802
+  },
+  {
+   "source": "kubernetes/reference/glossary/resourceclaimtemplate.md",
+   "sha256": "1d417f89817690fa9f429f09dbe76efb5e87088b93c4c254f784a7cc4e76080c",
+   "bytes": 1250
+  },
+  {
+   "source": "kubernetes/reference/glossary/resourceslice.md",
+   "sha256": "807e9501d6ace702c541f36effae3ad9f4223c9a2945df744baed35cc1e430b9",
+   "bytes": 909
+  },
+  {
+   "source": "kubernetes/reference/glossary/reviewer.md",
+   "sha256": "70aadfb195a591a8a47c0822f5a7ec3c15822b43ae3b47d9dc97dd5774bddbe3",
+   "bytes": 422
+  },
+  {
+   "source": "kubernetes/reference/glossary/san.md",
+   "sha256": "a6b5ce24de0993d3eb7d068f475838303bb415568ba37727a5ac02bf11b0807e",
+   "bytes": 643
+  },
+  {
+   "source": "kubernetes/reference/glossary/secret.md",
+   "sha256": "b6a52c816856d78c6d31b12a61315de566d9c6a33dd4ef4b97ce19e9ef24b57b",
+   "bytes": 953
+  },
+  {
+   "source": "kubernetes/reference/glossary/security-context.md",
+   "sha256": "65f2d3d89dca4db0f22174dd8ab705d3a2a3e397b22c30d120770624de88f2b0",
+   "bytes": 762
+  },
+  {
+   "source": "kubernetes/reference/glossary/selector.md",
+   "sha256": "6c8984414ab11170fcd10f6b85908bf7bad902b9062b87abb1b5be4903269c81",
+   "bytes": 475
+  },
+  {
+   "source": "kubernetes/reference/glossary/service-account.md",
+   "sha256": "8b8fc738efadc3e6e93c6390a0174805e1cf535b277ae1bdf67c608cad4eb47c",
+   "bytes": 700
+  },
+  {
+   "source": "kubernetes/reference/glossary/service-catalog.md",
+   "sha256": "e29768dbaab96a0e92dea3684de5609a915fb4e3df860eb0d9caa89c2e2f78f5",
+   "bytes": 729
+  },
+  {
+   "source": "kubernetes/reference/glossary/service.md",
+   "sha256": "00a9ed8cc5e7dce915996519656786ac45ba2ab9f9b6c9a4f58e6f7c7df25e01",
+   "bytes": 913
+  },
+  {
+   "source": "kubernetes/reference/glossary/shuffle-sharding.md",
+   "sha256": "2f44160f6919b162efc09c017377f8c35b2788bb12fdbbaeb5b17d697c25b5cf",
+   "bytes": 2210
+  },
+  {
+   "source": "kubernetes/reference/glossary/sidecar-container.md",
+   "sha256": "0a12daba3fa2acdbb30b4946630e41ee35153b8cc8f5d02905f76632dd97faf9",
+   "bytes": 772
+  },
+  {
+   "source": "kubernetes/reference/glossary/sig.md",
+   "sha256": "3f134e5d7bd5073e94c93aaeb1321649b4a61f810feefed5ec057700b0e7e7b5",
+   "bytes": 1060
+  },
+  {
+   "source": "kubernetes/reference/glossary/spec.md",
+   "sha256": "18a95bc19c8c0af0a99ee8b7ecb2546a46123bef6c081c08dc590506b9b7dd79",
+   "bytes": 1010
+  },
+  {
+   "source": "kubernetes/reference/glossary/statefulset.md",
+   "sha256": "37f684c29c479c01fadbfddf291a8bd256a96d7beb3a1fb592319dea3bfbdf56",
+   "bytes": 1191
+  },
+  {
+   "source": "kubernetes/reference/glossary/static-pod.md",
+   "sha256": "239f1b4fa1a6248b2c9e16b21989f3d3b121c027fef9a7bfe7b53f815ea46999",
+   "bytes": 540
+  },
+  {
+   "source": "kubernetes/reference/glossary/storage-class.md",
+   "sha256": "56a7d2e5f797f8201e7e7e0d9310f8f3f479cf85186a7ba4d6cb43482b89a70e",
+   "bytes": 824
+  },
+  {
+   "source": "kubernetes/reference/glossary/sysctl.md",
+   "sha256": "03e9e21d076db069d2ca2a2b098401be6a9239f3c9da3e7aa6041322d40d7533",
+   "bytes": 627
+  },
+  {
+   "source": "kubernetes/reference/glossary/taint.md",
+   "sha256": "37a7b4f590b5fb7fbc7a62d577a1229283e57fbd6a5fc7090e4381b18cb664a0",
+   "bytes": 827
+  },
+  {
+   "source": "kubernetes/reference/glossary/toleration.md",
+   "sha256": "c7bae52dcea11eaa2587cf2a15c0bc9fe1136e43c32bc884818c92000fe2031e",
+   "bytes": 1043
+  },
+  {
+   "source": "kubernetes/reference/glossary/uid.md",
+   "sha256": "bcef4194f7f7e5f812ebe3caca9d279b2ef9fc3fb1d2e27fb889badc3fa61a36",
+   "bytes": 463
+  },
+  {
+   "source": "kubernetes/reference/glossary/upstream.md",
+   "sha256": "3f3b48619f1c2d168fde4cf6d2112312a837e8d75391b8045246200f817d12c2",
+   "bytes": 780
+  },
+  {
+   "source": "kubernetes/reference/glossary/userns.md",
+   "sha256": "b331c9068b944b36cafc90f11651988c8f5f43c4a25ef4fba5b2dd5172c48f0d",
+   "bytes": 912
+  },
+  {
+   "source": "kubernetes/reference/glossary/volume-plugin.md",
+   "sha256": "30aa898c87540825a95a4ae827941229562ba1753a8f1509e1bbab83605b9cd5",
+   "bytes": 603
+  },
+  {
+   "source": "kubernetes/reference/glossary/volume.md",
+   "sha256": "8a5e80a6b6e01fec4eb45bb0e7d9662c571b316aaa1074013549a5e0a7c9ca29",
+   "bytes": 623
+  },
+  {
+   "source": "kubernetes/reference/glossary/watch.md",
+   "sha256": "1e038fe1a1db127b822aad09b90698694cf61b8585fc4d95d083c47182c5ecb0",
+   "bytes": 809
+  },
+  {
+   "source": "kubernetes/reference/glossary/wg.md",
+   "sha256": "bbd78cab213f061c8a080b9c5669a62e051d985ed1e473b5a34719ee97460fd8",
+   "bytes": 818
+  },
+  {
+   "source": "kubernetes/reference/glossary/workload.md",
+   "sha256": "f635ccf347d3881caa1504ca54ef2b0694b400157fffc65536769e40f537992e",
+   "bytes": 609
+  }
+ ]
+}
