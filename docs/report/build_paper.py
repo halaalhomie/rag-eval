@@ -90,6 +90,16 @@ subtitle = ParagraphStyle(
     textColor=INK2,
     spaceAfter=4,
 )
+author_style = ParagraphStyle(
+    "author",
+    fontName="Sans-Bold",
+    fontSize=11,
+    leading=14,
+    alignment=TA_CENTER,
+    textColor=INK,
+    spaceBefore=6,
+    spaceAfter=2,
+)
 meta = ParagraphStyle(
     "meta",
     fontName="Sans",
@@ -280,7 +290,8 @@ def table(
             style.append(("BACKGROUND", (0, r), (-1, r), colors.HexColor("#f9f9f7")))
     t.setStyle(TableStyle(style))
     story.append(Spacer(1, 4))
-    story.append(t)
+    # Short tables stay whole; splitting them strands a row or two under a repeated header.
+    story.append(KeepTogether([t]) if len(rows) <= 8 else t)
     story.append(Spacer(1, 8))
 
 
@@ -568,7 +579,7 @@ doc = BaseDocTemplate(
     topMargin=18 * mm,
     bottomMargin=16 * mm,
     title="RAG-Forge: Building an Evaluation-Driven RAG System",
-    author="RAG-Forge project",
+    author="Nabeel Ahmad",
     subject="Technical report, Phases 1-4",
 )
 frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id="f")
@@ -586,6 +597,7 @@ P(
     "evaluation dataset and retrieval benchmark",
     subtitle,
 )
+P("Nabeel Ahmad", author_style)
 P(
     "RAG-Forge project · September 2026 · work in progress · repository commits f2854e3 → f46239c",
     meta,
