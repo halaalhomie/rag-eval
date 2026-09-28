@@ -243,3 +243,4 @@ data/             corpus manifest, raw corpus (gitignored), eval sets, experimen
 - [docs/retrieval.md](docs/retrieval.md): retriever interface, dense retrieval, pgvector pitfalls
 - [docs/generation.md](docs/generation.md): LLM providers, local model, prompts, citations, baseline
 - [docs/evaluation.md](docs/evaluation.md): dataset design and audit, metrics, baseline results by question type
+- [docs/report/RAG-Forge_Technical_Report.pdf](docs/report/RAG-Forge_Technical_Report.pdf): technical report on Phases 1–4 (architecture, dataset generation, results)
