@@ -221,6 +221,21 @@ def _pack(text: str, units: list[_Unit], max_tokens: int, overlap: int) -> list[
     return spans
 
 
+def sentence_spans(text: str, start: int, end: int) -> list[tuple[int, int]]:
+    """Sentence-level spans in text[start:end]; fenced code blocks stay whole.
+
+    Uses the same block and sentence rules as the chunker (hard-wrapped lines are not
+    sentence boundaries). Used to present numbered sentences for evidence selection.
+    """
+    spans: list[tuple[int, int]] = []
+    for block in _blocks(text, start, end):
+        if block.is_code:
+            spans.append((block.start, block.end))
+        else:
+            spans.extend((u.start, u.end) for u in _split_on(text, block, _SENTENCE_END))
+    return spans
+
+
 def section_at(sections: list[Section], offset: int) -> Section | None:
     """Most specific section containing `offset` (sections are sorted by start)."""
     starts = [s.start for s in sections]

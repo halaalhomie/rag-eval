@@ -49,7 +49,7 @@ config validation.
 | 1 | Repository, configuration, Docker, DB schema, `/health` | done |
 | 2 | Document ingestion (MD/TXT/PDF), structure-aware parent/child chunking, Kubernetes corpus | done |
 | 3 | Baseline dense RAG: local embeddings, pgvector search, LLM provider layer, cited answers | done |
-| 4 | Evaluation dataset + retrieval metrics | planned |
+| 4 | Evaluation dataset (316 synthetic, validated items), retrieval metrics, dense baseline | done |
 | 5–8 | BM25, hybrid (RRF), reranking, parent-child | planned |
 | 9–12 | Query rewriting, Corrective RAG, Self-RAG-inspired loop, claim verification | planned |
 | 13–18 | Observability, experiment runner, benchmarks, docs, deployment | planned |
@@ -73,18 +73,33 @@ Current ingest: 551 documents, 1,044 parent chunks and 3,855 embedded child chun
 
 ## Benchmark results
 
-No experiments have been run yet. All values stay **TBD** until they are produced by
-`scripts/run_experiments.py` and recorded under `data/experiments/`.
+Every value comes from an actual run recorded under `data/experiments/`. Anything not
+yet measured is **TBD**.
 
-| System | Recall@5 | MRR | Faithfulness | Answer Relevance | Avg Latency | Cost / query |
+Test split of `kubernetes_v1` (dataset version `c6009ef85e53`): 198 answerable questions.
+**The dataset is synthetic** (LLM-generated, validator-filtered, not human-annotated); see
+[docs/evaluation.md](docs/evaluation.md). Recall is **Evidence Recall@5**: the fraction of
+each question's required evidence spans found in the top 5.
+
+| System | Evidence Recall@5 | MRR | Faithfulness | Answer Relevance | Avg Latency | Cost / query |
 |---|---:|---:|---:|---:|---:|---:|
-| Dense RAG | TBD | TBD | TBD | TBD | TBD | TBD |
+| Dense RAG | 0.701 (95% CI 0.641–0.759) | 0.624 (0.573–0.682) | TBD | TBD | TBD | TBD |
 | BM25 | TBD | TBD | TBD | TBD | TBD | TBD |
 | Hybrid | TBD | TBD | TBD | TBD | TBD | TBD |
 | Hybrid + Reranker | TBD | TBD | TBD | TBD | TBD | TBD |
 | Hybrid + Reranker + Rewrite | TBD | TBD | TBD | TBD | TBD | TBD |
 | Corrective RAG | TBD | TBD | TBD | TBD | TBD | TBD |
 | Self-RAG-inspired | TBD | TBD | TBD | TBD | TBD | TBD |
+
+Dense retrieval alone takes 24 ms at p50. End-to-end latency, cost and the generation
+metrics stay TBD until the generation evaluation runs. By question type, dense retrieval
+is weakest on ambiguous questions (Evidence Recall@5 0.47) and comparisons (0.45), and
+strongest on keyword-heavy (0.87) and simple factual (0.82) ones.
+
+```bash
+python scripts/create_eval_dataset.py                       # generate (needs the LLM server)
+python scripts/run_retrieval_eval.py --retriever dense --split test
+```
 
 ## Setup
 
@@ -213,7 +228,7 @@ app/
   retrieval/      retriever interface, embeddings, dense (pgvector); BM25/hybrid/rerank next
   rag/            strategies (baseline), prompts; graph/graders in phases 9–12
   generation/     LLM provider layer, structured output, citations, usage/cost
-  evaluation/     datasets, metrics, experiments     (phase 4+)
+  evaluation/     synthetic dataset generation + validators, span labels, retrieval metrics/runner
   observability/  tracing                            (phase 13)
 scripts/          CLI entry points (init_db, ingest, eval, experiments)
 tests/            unit / integration / evaluation
@@ -227,3 +242,4 @@ data/             corpus manifest, raw corpus (gitignored), eval sets, experimen
 - [docs/ingestion.md](docs/ingestion.md): loaders, chunking algorithm, corpus, measurements
 - [docs/retrieval.md](docs/retrieval.md): retriever interface, dense retrieval, pgvector pitfalls
 - [docs/generation.md](docs/generation.md): LLM providers, local model, prompts, citations, baseline
+- [docs/evaluation.md](docs/evaluation.md): dataset design and audit, metrics, baseline results by question type

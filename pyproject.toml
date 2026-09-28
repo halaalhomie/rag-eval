@@ -56,4 +56,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
-ignore = ["B008"]  # FastAPI Depends() in defaults is idiomatic
+ignore = [
+    "B008",   # FastAPI Depends() in defaults is idiomatic
+    "SIM905", # "a b c".split() is clearer than a long list literal for word lists
+]
