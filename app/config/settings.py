@@ -139,6 +139,16 @@ class RetrievalSettings(BaseSettings):
     # How many candidates each retriever contributes before fusion.
     retrieval_candidates: int = Field(default=50, ge=1, le=1000)
 
+    # BM25 (Okapi). k1: term-frequency saturation; b: document-length normalization.
+    bm25_k1: float = Field(default=1.2, ge=0.0, le=5.0)
+    bm25_b: float = Field(default=0.75, ge=0.0, le=1.0)
+    bm25_include_context: bool = True  # index "Title > Section" with the chunk text
+    # Analyzer options; defaults chosen by the dev-split ablation in docs/retrieval.md
+    # (no variant was significantly better; compounds had the best point estimates).
+    bm25_compounds: bool = True
+    bm25_camel_parts: bool = False
+    bm25_stemming: bool = False
+
     reranker_model: str = "BAAI/bge-reranker-base"
     rerank_candidates: int = Field(default=30, ge=1, le=500)
     rerank_top_k: int = Field(default=5, ge=1, le=100)

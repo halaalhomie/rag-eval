@@ -21,12 +21,19 @@ logger = logging.getLogger(__name__)
 
 
 class BaselineRAG:
+    """Also used for single-retriever variants (e.g. BM25 RAG): same pipeline, a different
+    retriever, and its own strategy name in results."""
+
     name = "baseline"
 
-    def __init__(self, retriever: Retriever, llm: LLMClient, settings: Settings):
+    def __init__(
+        self, retriever: Retriever, llm: LLMClient, settings: Settings, name: str | None = None
+    ):
         self.retriever = retriever
         self.llm = llm
         self.settings = settings
+        if name:
+            self.name = name
 
     def run(
         self, query: str, *, top_k: int | None = None, filters: MetadataFilter | None = None

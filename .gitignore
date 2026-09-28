@@ -21,7 +21,7 @@ htmlcov/
 # and experiment summaries in git.
 data/raw/*
 !data/raw/.gitkeep
-data/experiments/*/per_query.jsonl
+data/experiments/**/per_query.jsonl
 models/
 
 # Editors / OS

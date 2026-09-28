@@ -3,6 +3,8 @@
 Usage:
     python scripts/run_retrieval_eval.py --retriever dense --split test
     python scripts/run_retrieval_eval.py --retriever dense --split dev --k 1,5,10
+    BM25_STEMMING=false python scripts/run_retrieval_eval.py --retriever bm25 --split dev \
+        --label no-stem                        # ablations via settings env vars
 
 Writes data/experiments/<run-id>/report.json (committed) and per_query.jsonl (gitignored).
 """
@@ -17,6 +19,7 @@ from app.db.session import session_scope
 from app.evaluation.datasets.labels import ChunkIndex
 from app.evaluation.datasets.schema import dataset_version, load_dataset
 from app.evaluation.retrieval.runner import evaluate_retrieval
+from app.retrieval.bm25 import build_bm25
 from app.retrieval.dense import DenseRetriever
 from app.retrieval.embeddings import get_embedder
 from app.utils.logging import configure_logging
@@ -27,7 +30,9 @@ def build_retriever(name: str, settings):
         return DenseRetriever(
             get_embedder(settings.embedding), settings.retrieval.similarity_metric
         )
-    raise SystemExit(f"unknown retriever '{name}' (available: dense)")
+    if name == "bm25":
+        return build_bm25(settings)
+    raise SystemExit(f"unknown retriever '{name}' (available: dense, bm25)")
 
 
 if __name__ == "__main__":
@@ -37,6 +42,7 @@ if __name__ == "__main__":
     parser.add_argument("--retriever", default="dense")
     parser.add_argument("--k", default="1,3,5,10,20")
     parser.add_argument("--out-dir", type=Path, default=Path("data/experiments"))
+    parser.add_argument("--label", help="suffix for the run id, e.g. an ablation name")
     args = parser.parse_args()
 
     settings = get_settings()
@@ -57,6 +63,8 @@ if __name__ == "__main__":
         config=settings.snapshot(),
     )
     run_id = f"{datetime.now(UTC):%Y%m%dT%H%M%S}-retrieval-{args.retriever}-{args.split}"
+    if args.label:
+        run_id += f"-{args.label}"
     out = args.out_dir / run_id
     out.mkdir(parents=True, exist_ok=True)
     (out / "report.json").write_text(report.model_dump_json(indent=2) + "\n")

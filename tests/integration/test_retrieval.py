@@ -108,3 +108,44 @@ def test_query_endpoint_rejects_unimplemented_strategy(indexed, factory):
     resp = TestClient(app).post("/query", json={"query": "x", "strategy": "self_rag"})
     assert resp.status_code == 501
     assert "baseline" in resp.json()["detail"]
+
+
+# ---------------------------------------------------------------- BM25
+def test_bm25_retrieves_standard_results_and_filters(indexed, factory):
+    from app.retrieval.bm25 import BM25Retriever
+
+    bm25 = BM25Retriever(session_factory=factory)
+    results = bm25.retrieve("deployment rollback revision", 3)
+    assert results[0].metadata["title"] == "Deployments"
+    assert results[0].retriever == "bm25" and results[0].rank == 1
+    assert results[0].parent_id and results[0].end_char > results[0].start_char
+    filtered = bm25.retrieve("probe secret deployment", 5, filters={"doc_category": "tasks"})
+    assert [r.metadata["title"] for r in filtered] == ["Deployments"]
+
+
+def test_bm25_index_rebuilds_when_chunks_change(indexed, factory, pg_engine):
+    from app.retrieval.bm25 import BM25Retriever
+
+    bm25 = BM25Retriever(session_factory=factory)
+    assert bm25.retrieve("volume", 5) == []
+    with Session(pg_engine) as s:
+        doc = load_markdown(
+            "---\ntitle: Volumes\n---\n## Volume\n\nA volume mounts data.\n",
+            source="test://volumes.md",
+        )
+        IngestionPipeline(Settings(), indexed).ingest_document(s, doc)
+        s.commit()
+    assert bm25.retrieve("volume", 5)[0].metadata["title"] == "Volumes"
+
+
+def test_query_endpoint_serves_bm25_strategy(indexed, factory):
+    llm = FakeLLM(replies=["Roll back with kubectl rollout undo [1]."])
+    app = create_app()
+    app.dependency_overrides[get_components] = lambda: Components(llm, indexed, factory)
+    resp = TestClient(app).post(
+        "/query", json={"query": "deployment rollback", "strategy": "bm25", "top_k": 2}
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["retrieval_strategy"] == "bm25"
+    assert body["contexts"][0]["retriever"] == "bm25"

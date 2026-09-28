@@ -1,7 +1,7 @@
 # Retrieval
 
 This document covers the retriever interface, and each retrieval method as it is
-implemented. Current status: **dense retrieval**. BM25, hybrid fusion, reranking and
+implemented. Current status: **dense retrieval** and **BM25**. Hybrid fusion, reranking and
 parent-child expansion are added in later phases.
 
 ## Interface
@@ -90,6 +90,76 @@ preloads the embedder at startup.
 
 Retrieval quality is measured with Recall@K, MRR and NDCG in the evaluation phase. These
 examples only confirm that the pipeline is wired correctly.
+
+## BM25
+
+[app/retrieval/bm25.py](../app/retrieval/bm25.py): Okapi BM25 over an in-process inverted
+index.
+
+```
+score(q, d) = Σ_t idf(t) · tf·(k1+1) / (tf + k1·(1 - b + b·|d|/avgdl))
+idf(t)      = ln(1 + (N - df + 0.5) / (df + 0.5))        # Lucene form, never negative
+```
+
+- **Real BM25, not Postgres full-text search.** `ts_rank` has no IDF saturation and a
+  different length normalization, so a "BM25" row built on it would be mislabelled.
+- **In memory, rebuilt automatically.** The index (3,855 chunks, 21,030 terms) builds in
+  about 1.1 s including the database load. Before each query, a cheap
+  `count(*), max(created_at)` check detects re-ingestion and triggers a rebuild, so the
+  index can't go stale.
+- **Same indexed text as dense retrieval.** Each chunk is indexed with its
+  `Title > Section` prefix (`BM25_INCLUDE_CONTEXT`), so the two retrievers see the same
+  input.
+- **Deterministic and filterable.** Ties break by chunk ID. Metadata filters are applied
+  after scoring, with a deeper candidate list.
+- **Latency:** 3.9 ms p50 and 5.5 ms p95 per query, versus 24 ms for dense retrieval,
+  because no query embedding is computed.
+
+### Tokenization for technical text
+
+The [analyzer](../app/retrieval/text.py) always lowercases and drops stopwords. On top of
+that it can emit:
+
+- **compounds:** whole identifiers such as `kube-apiserver`, `spec.replicas`,
+  `grace-period`, alongside their parts
+- **CamelCase parts:** `PodDisruptionBudget` also yields `pod`, `disruption`, `budget`
+- **light stems:** the same rules as the dataset validators
+
+### Choosing the configuration on the dev split
+
+Every choice below was made on the **dev split** (88 answerable items). The test split was
+evaluated once, with the final configuration.
+
+| Analyzer (k1 = 1.2, b = 0.75) | EvR@5 | EvR@10 | MRR | NDCG@10 |
+|---|---:|---:|---:|---:|
+| *dense retrieval (reference)* | *0.748* | *0.847* | *0.617* | *0.594* |
+| words | 0.818 | 0.871 | 0.780 | 0.729 |
+| words + stem | 0.820 | 0.849 | 0.782 | 0.731 |
+| **words + compound** (chosen) | **0.827** | **0.871** | **0.788** | **0.737** |
+| words + compound + camel | 0.817 | 0.869 | 0.752 | 0.712 |
+| words + compound + camel + stem | 0.820 | 0.850 | 0.777 | 0.726 |
+
+**No analyzer variant is significantly better than plain words.** Every paired-bootstrap
+95% interval of the difference includes 0. Compounds changed only 6 of 88 queries (4
+better, 2 worse). CamelCase splitting leaned negative on MRR (12 queries worse, 4 better;
+difference −0.027, CI [−0.061, +0.005]): splitting identifiers into common words such as
+`pod` dilutes their specificity. We chose words + compound because it had the best point
+estimate on every metric and only affects queries that contain identifiers. Stemming and
+CamelCase parts stay available as switches.
+
+**k1/b grid (words + compound, dev):** the grid is flat. EvR@5 ranges 0.827–0.845 and MRR
+0.775–0.793 over k1 ∈ {0.9, 1.2, 1.5} × b ∈ {0.5, 0.75, 0.9}. That spread is one or two
+queries out of 88. Picking the best cell would fit noise, so the standard defaults
+(k1 = 1.2, b = 0.75) are kept. All ablation reports are in
+[data/experiments/ablations/](../data/experiments/ablations/).
+
+### Test-split results
+
+See [evaluation.md](evaluation.md#bm25-vs-dense-test-split). BM25 is significantly better
+than dense retrieval overall (Evidence Recall@5 0.791 vs 0.701; paired difference +0.090,
+95% CI [+0.034, +0.143]). It is worse on comparison questions, and neither retriever helps
+ambiguous questions. **Part of BM25's lead comes from the lexical bias of the synthetic
+questions**, which is discussed there.
 
 ## Limitations
 

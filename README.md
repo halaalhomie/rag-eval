@@ -50,7 +50,8 @@ config validation.
 | 2 | Document ingestion (MD/TXT/PDF), structure-aware parent/child chunking, Kubernetes corpus | done |
 | 3 | Baseline dense RAG: local embeddings, pgvector search, LLM provider layer, cited answers | done |
 | 4 | Evaluation dataset (316 synthetic, validated items), retrieval metrics, dense baseline | done |
-| 5–8 | BM25, hybrid (RRF), reranking, parent-child | planned |
+| 5 | BM25 (tokenizer and k1/b chosen on dev; paired comparison with dense) | done |
+| 6–8 | Hybrid (RRF), reranking, parent-child | planned |
 | 9–12 | Query rewriting, Corrective RAG, Self-RAG-inspired loop, claim verification | planned |
 | 13–18 | Observability, experiment runner, benchmarks, docs, deployment | planned |
 
@@ -84,21 +85,26 @@ each question's required evidence spans found in the top 5.
 | System | Evidence Recall@5 | MRR | Faithfulness | Answer Relevance | Avg Latency | Cost / query |
 |---|---:|---:|---:|---:|---:|---:|
 | Dense RAG | 0.701 (95% CI 0.641–0.759) | 0.624 (0.573–0.682) | TBD | TBD | TBD | TBD |
-| BM25 | TBD | TBD | TBD | TBD | TBD | TBD |
+| BM25 | **0.791** (0.740–0.842) | **0.725** (0.671–0.776) | TBD | TBD | TBD | TBD |
 | Hybrid | TBD | TBD | TBD | TBD | TBD | TBD |
 | Hybrid + Reranker | TBD | TBD | TBD | TBD | TBD | TBD |
 | Hybrid + Reranker + Rewrite | TBD | TBD | TBD | TBD | TBD | TBD |
 | Corrective RAG | TBD | TBD | TBD | TBD | TBD | TBD |
 | Self-RAG-inspired | TBD | TBD | TBD | TBD | TBD | TBD |
 
-Dense retrieval alone takes 24 ms at p50. End-to-end latency, cost and the generation
-metrics stay TBD until the generation evaluation runs. By question type, dense retrieval
-is weakest on ambiguous questions (Evidence Recall@5 0.47) and comparisons (0.45), and
-strongest on keyword-heavy (0.87) and simple factual (0.82) ones.
+Retrieval alone takes 24 ms at p50 for dense and 3.9 ms for BM25. End-to-end latency,
+cost and the generation metrics stay TBD until the generation evaluation runs.
+
+BM25 beats dense retrieval significantly (paired difference in Evidence Recall@5 +0.090,
+95% CI [+0.034, +0.143]). **Part of that lead is lexical bias in the synthetic questions**;
+see [docs/evaluation.md](docs/evaluation.md#bm25-vs-dense-test-split). Dense retrieval is
+better on comparison questions, and neither helps ambiguous ones (0.47 each).
 
 ```bash
 python scripts/create_eval_dataset.py                       # generate (needs the LLM server)
 python scripts/run_retrieval_eval.py --retriever dense --split test
+python scripts/run_retrieval_eval.py --retriever bm25 --split test
+python scripts/compare_retrieval_runs.py data/experiments/<run-a> data/experiments/<run-b>
 ```
 
 ## Setup
@@ -225,7 +231,7 @@ app/
   config/         validated settings
   db/             SQLAlchemy models, session, schema init
   ingestion/      loaders, Hugo preprocessing, parent/child chunking, pipeline
-  retrieval/      retriever interface, embeddings, dense (pgvector); BM25/hybrid/rerank next
+  retrieval/      retriever interface, embeddings, dense (pgvector), BM25 + analyzer; hybrid next
   rag/            strategies (baseline), prompts; graph/graders in phases 9–12
   generation/     LLM provider layer, structured output, citations, usage/cost
   evaluation/     synthetic dataset generation + validators, span labels, retrieval metrics/runner

@@ -235,11 +235,61 @@ How to read these (small per-type n, so these are directions, not conclusions):
 - Keyword-heavy questions are already strong for dense retrieval here (0.87). This is
   partly the lexical bias noted above; BM25 will show whether exact matching adds more.
 
+## BM25 vs dense (test split)
+
+Run `20260928T083304-retrieval-bm25-test`: words + compound analyzer, k1 = 1.2, b = 0.75.
+All of these choices were made on dev (see [retrieval.md](retrieval.md#bm25)). Both
+retrievers answer the same 198 questions, so differences are **paired**: bootstrapped per
+query with `scripts/compare_retrieval_runs.py`.
+
+| Metric | Dense | BM25 | Difference, BM25 − dense (95% CI) | Queries BM25 better / worse / tied |
+|---|---:|---:|---:|---:|
+| Evidence Recall@5 | 0.701 | **0.791** | **+0.090** [+0.034, +0.143] | 36 / 13 / 149 |
+| Evidence Recall@10 | 0.761 | **0.844** | **+0.083** [+0.030, +0.134] | 31 / 14 / 153 |
+| MRR | 0.624 | **0.725** | **+0.101** [+0.046, +0.155] | 66 / 34 / 98 |
+| NDCG@10 | 0.595 | **0.715** | **+0.120** [+0.071, +0.164] | 87 / 37 / 74 |
+| Latency p50 | 24 ms | 3.9 ms | | |
+
+BM25's own 95% CI for Evidence Recall@5 is 0.740–0.842 and for MRR 0.671–0.776.
+
+By question type (Evidence Recall@5):
+
+| Type | n | Dense | BM25 | Difference |
+|---|---:|---:|---:|---:|
+| numerical | 21 | 0.571 | 0.952 | **+0.381** |
+| adversarial | 17 | 0.824 | 1.000 | +0.176 |
+| simple_factual | 42 | 0.821 | 0.905 | +0.083 |
+| keyword_heavy | 31 | 0.871 | 0.935 | +0.065 |
+| multi_hop | 26 | 0.641 | 0.689 | +0.048 |
+| semantic | 31 | 0.672 | 0.710 | +0.038 |
+| ambiguous | 17 | 0.471 | 0.471 | 0.000 |
+| comparison | 13 | 0.449 | 0.368 | **−0.081** |
+
+How to read this:
+
+- **Part of BM25's lead is an artifact of the dataset.** Adversarial questions are
+  generated from a fact statement written in the passage's own words, so they
+  near-quote the evidence, and BM25 finds all of them (1.00). Numerical questions share
+  exact numbers and units with their evidence. This is the lexical bias listed under
+  [Known weaknesses](#known-weaknesses-of-the-dataset). The gap on semantic questions
+  (+0.04), which were filtered for low word overlap, is much smaller and is a fairer
+  indication of the difference on paraphrased queries.
+- **Dense retrieval is better for comparison questions** (0.45 vs 0.37 at 5; 0.92 vs 0.68
+  at 20). They are phrased conceptually ("how does X differ from Y"), which suits
+  embeddings.
+- **Neither helps ambiguous questions (0.47 each).** Vague questions lack the words that
+  either method needs, and only query rewriting addresses that.
+- **The two methods fail on different questions**: 36 queries where BM25 is better at 5
+  and 13 where dense is better. That complementarity is the motivation for hybrid fusion
+  (next phase), which will be measured the same way.
+
 ## Running
 
 ```bash
 python scripts/create_eval_dataset.py                    # needs the LLM server
 python scripts/run_retrieval_eval.py --retriever dense --split test
+python scripts/run_retrieval_eval.py --retriever bm25 --split test
+python scripts/compare_retrieval_runs.py data/experiments/<dense-run> data/experiments/<bm25-run>
 python scripts/export_review_sheet.py --per-type 5       # CSV for human spot checks
 ```
 

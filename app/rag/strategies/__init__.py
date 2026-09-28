@@ -16,6 +16,7 @@ from app.generation.llm import LLMClient
 from app.rag.strategies.baseline import BaselineRAG
 from app.rag.types import RAGResult
 from app.retrieval.base import MetadataFilter
+from app.retrieval.bm25 import build_bm25
 from app.retrieval.dense import DenseRetriever, SessionFactory
 from app.retrieval.embeddings import Embedder
 
@@ -49,11 +50,16 @@ def _baseline(settings: Settings, c: Components) -> Pipeline:
     )
 
 
+def _bm25(settings: Settings, c: Components) -> Pipeline:
+    return BaselineRAG(build_bm25(settings, c.session_factory), c.llm, settings, name="bm25")
+
+
 BUILDERS = {
     RagStrategy.BASELINE: _baseline,
     # "dense" is experiment A (dense RAG); today it is the baseline pipeline. It gets its
     # own builder only if the two diverge.
     RagStrategy.DENSE: _baseline,
+    RagStrategy.BM25: _bm25,
 }
 
 
