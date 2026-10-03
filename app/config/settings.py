@@ -132,7 +132,9 @@ class RetrievalSettings(BaseSettings):
     enable_query_rewrite: bool = True
     enable_multi_query: bool = False
 
-    fusion_method: FusionMethod = FusionMethod.RRF
+    # Linear fusion was chosen on the dev split by a rule fixed before tuning (beat the
+    # RRF default by > 1 query's worth of Evidence Recall@5); see docs/retrieval.md.
+    fusion_method: FusionMethod = FusionMethod.LINEAR
     dense_weight: float = Field(default=0.5, ge=0.0)
     bm25_weight: float = Field(default=0.5, ge=0.0)
     rrf_k: int = Field(default=60, ge=1, description="RRF smoothing constant (Cormack et al.)")

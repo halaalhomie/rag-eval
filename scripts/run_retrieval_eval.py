@@ -19,6 +19,7 @@ from app.db.session import session_scope
 from app.evaluation.datasets.labels import ChunkIndex
 from app.evaluation.datasets.schema import dataset_version, load_dataset
 from app.evaluation.retrieval.runner import evaluate_retrieval
+from app.rag.strategies import Components, build_hybrid
 from app.retrieval.bm25 import build_bm25
 from app.retrieval.dense import DenseRetriever
 from app.retrieval.embeddings import get_embedder
@@ -32,7 +33,12 @@ def build_retriever(name: str, settings):
         )
     if name == "bm25":
         return build_bm25(settings)
-    raise SystemExit(f"unknown retriever '{name}' (available: dense, bm25)")
+    if name == "hybrid":
+        # Retrieval-only evaluation: the LLM slot is never called.
+        return build_hybrid(
+            settings, Components(llm=None, embedder=get_embedder(settings.embedding))
+        )
+    raise SystemExit(f"unknown retriever '{name}' (available: dense, bm25, hybrid)")
 
 
 if __name__ == "__main__":

@@ -149,3 +149,20 @@ def test_query_endpoint_serves_bm25_strategy(indexed, factory):
     body = resp.json()
     assert body["retrieval_strategy"] == "bm25"
     assert body["contexts"][0]["retriever"] == "bm25"
+
+
+# ---------------------------------------------------------------- hybrid
+def test_query_endpoint_serves_hybrid_with_component_ranks(indexed, factory):
+    llm = FakeLLM(replies=["A liveness probe restarts containers [1]."])
+    app = create_app()
+    app.dependency_overrides[get_components] = lambda: Components(llm, indexed, factory)
+    resp = TestClient(app).post(
+        "/query", json={"query": "liveness probe", "strategy": "hybrid", "top_k": 2}
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["retrieval_strategy"] == "hybrid"
+    top = body["contexts"][0]
+    assert top["retriever"] == "hybrid" and top["title"] == "Probes"
+    assert set(top["components"]) == {"dense", "bm25"}  # found by both retrievers
+    assert top["components"]["bm25"]["rank"] == 1

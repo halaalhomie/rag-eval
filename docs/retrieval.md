@@ -1,8 +1,8 @@
 # Retrieval
 
 This document covers the retriever interface, and each retrieval method as it is
-implemented. Current status: **dense retrieval** and **BM25**. Hybrid fusion, reranking and
-parent-child expansion are added in later phases.
+implemented. Current status: **dense retrieval**, **BM25** and **hybrid fusion**. Reranking
+and parent-child expansion are added in later phases.
 
 ## Interface
 
@@ -160,6 +160,66 @@ than dense retrieval overall (Evidence Recall@5 0.791 vs 0.701; paired differenc
 95% CI [+0.034, +0.143]). It is worse on comparison questions, and neither retriever helps
 ambiguous questions. **Part of BM25's lead comes from the lexical bias of the synthetic
 questions**, which is discussed there.
+
+## Hybrid retrieval
+
+[app/retrieval/hybrid.py](../app/retrieval/hybrid.py). Dense retrieval and BM25 each
+return `RETRIEVAL_CANDIDATES` (50) results, and the two lists are fused:
+
+| `FUSION_METHOD` | Fused score | Notes |
+|---|---|---|
+| `rrf` | Σ<sub>r</sub> w<sub>r</sub> / (`RRF_K` + rank<sub>r</sub>) | Weighted Reciprocal Rank Fusion. Rank-only, so the incompatible score scales (cosine vs unbounded BM25) never interact |
+| `linear` (default) | Σ<sub>r</sub> w<sub>r</sub> · minmax<sub>r</sub>(score) | Each list is min-max normalized over its own candidates; sensitive to score distributions |
+
+Weights come from `DENSE_WEIGHT` and `BM25_WEIGHT` and are never hard-coded. A chunk found
+by only one retriever gets nothing from the other. Every fused result carries
+`components`, its rank and score in each list, and `/query` returns them. So it is always
+visible why a chunk ranked where it did. Latency: 39 ms p50 (both retrievers at depth 50,
+plus fusion).
+
+### How complementary are the two retrievers? (dev)
+
+On dev, BM25's and dense retrieval's top 5 together cover **0.911** of the required
+evidence spans, against 0.827 for BM25 and 0.748 for dense alone. 15 spans are found only
+by dense, 30 only by BM25, and 25 by neither. That is the headroom fusion can exploit,
+although a fused top 5 cannot hold all ten candidates.
+
+### Choosing the fusion configuration (dev)
+
+**Selection rule, fixed before tuning:** start from the textbook default (RRF, equal
+weights, k = 60). Replace it only with a configuration that improves dev Evidence
+Recall@5 by more than one query's worth (1/88 ≈ 0.011); break ties on MRR.
+
+| Configuration (dense weight; BM25 = 1 − w) | EvR@5 | EvR@10 | MRR | NDCG@10 |
+|---|---:|---:|---:|---:|
+| RRF, w = 0.5, k = 60 (default) | 0.826 | 0.917 | 0.780 | 0.730 |
+| RRF, w = 0.3 / 0.4 / 0.6 / 0.7, k = 60 | 0.826 / 0.826 / 0.803 / 0.819 | 0.911–0.917 | 0.703–0.805 | |
+| RRF, w = 0.3 / 0.4 / 0.5 / 0.6 / 0.7, k = 10 | 0.852 / 0.860 / 0.849 / 0.825 / 0.830 | 0.874–0.933 | 0.695–0.815 | |
+| linear, w = 0.3 / 0.4 / 0.6 / 0.7 | 0.849 / 0.854 / 0.843 / 0.830 | 0.894–0.917 | 0.731–0.819 | |
+| **linear, w = 0.5 (chosen)** | **0.866** | 0.917 | 0.800 | 0.756 |
+
+Findings on dev:
+
+- **The textbook default is no better than BM25 alone** (paired difference in EvR@5
+  +0.001). Equal-weight RRF at k = 60 lets the weaker dense list dilute BM25.
+- **RRF with k = 10 beats k = 60 at every weight.** A smaller k favours documents ranked
+  near the top of either list. This pattern is consistent, not a single lucky cell.
+- **Weighting dense above 0.5 hurts throughout**, consistent with BM25 being the stronger
+  retriever on this data.
+- **The winner, linear w = 0.5, improves EvR@5 by +0.040** (paired 95% CI [+0.011,
+  +0.085]). The evidence is thin, though: only **4 of 88** queries changed, all for the
+  better. Choosing the maximum of 15 configurations on 88 queries invites a winner's-curse
+  effect, so the test result is the number to trust. RRF (preferably with k = 10) stays one
+  setting away.
+
+All 15 dev reports are in [data/experiments/ablations/](../data/experiments/ablations/).
+
+### Test-split results
+
+See [evaluation.md](evaluation.md#hybrid-vs-bm25-and-dense-test-split). Hybrid is
+significantly better than dense retrieval, and **statistically indistinguishable from
+BM25 overall**. It is better than BM25 on semantic, multi-hop and comparison questions,
+and worse on numerical ones.
 
 ## Limitations
 

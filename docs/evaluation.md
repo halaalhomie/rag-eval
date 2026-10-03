@@ -283,12 +283,59 @@ How to read this:
   and 13 where dense is better. That complementarity is the motivation for hybrid fusion
   (next phase), which will be measured the same way.
 
+## Hybrid vs BM25 and dense (test split)
+
+Run `20261003T110041-retrieval-hybrid-test`: linear fusion, weights 0.5 / 0.5, 50
+candidates per retriever, chosen on dev. Paired differences:
+
+| Metric | Dense | BM25 | Hybrid | Hybrid − dense (95% CI) | Hybrid − BM25 (95% CI) |
+|---|---:|---:|---:|---:|---:|
+| Evidence Recall@5 | 0.701 | 0.791 | **0.802** | **+0.101** [+0.056, +0.146] | +0.011 [−0.024, +0.048] |
+| Evidence Recall@10 | 0.761 | 0.844 | **0.859** | **+0.098** [+0.056, +0.140] | +0.015 [−0.018, +0.048] |
+| MRR | 0.624 | **0.725** | 0.723 | **+0.099** [+0.059, +0.139] | −0.002 [−0.034, +0.029] |
+| NDCG@10 | 0.595 | **0.715** | 0.714 | **+0.119** [+0.085, +0.150] | −0.001 [−0.025, +0.024] |
+| Latency p50 | 24 ms | 3.9 ms | 39 ms | | |
+
+Hybrid's own 95% CI for Evidence Recall@5 is 0.750–0.852. Its Evidence Recall@20 is
+0.909, the highest of the three.
+
+By question type (Evidence Recall@5):
+
+| Type | n | Dense | BM25 | Hybrid |
+|---|---:|---:|---:|---:|
+| semantic | 31 | 0.672 | 0.710 | **0.806** |
+| multi_hop | 26 | 0.641 | 0.689 | **0.760** |
+| comparison | 13 | 0.449 | 0.368 | **0.468** |
+| keyword_heavy | 31 | 0.871 | **0.935** | **0.935** |
+| adversarial | 17 | 0.824 | **1.000** | **1.000** |
+| ambiguous | 17 | 0.471 | 0.471 | 0.471 |
+| simple_factual | 42 | 0.821 | **0.905** | 0.881 |
+| numerical | 21 | 0.571 | **0.952** | 0.809 |
+
+How to read this:
+
+- **Overall, hybrid is indistinguishable from BM25 on this dataset**, while costing about
+  10× the latency. The tie is not a sign that hybrid adds nothing; it is shaped by the
+  dataset's lexical bias. Hybrid **gains where questions are least lexical**: semantic
+  +0.097, multi-hop +0.071, comparison +0.10 over BM25. It **loses where BM25's exact
+  matching is decisive**: numerical −0.143, simple factual −0.024.
+- It is best or tied-best on 6 of 8 types, so it is the most *robust* of the three. On
+  real user queries, which are typically less lexically aligned with the docs than these
+  passage-derived questions, the semantic-type result is the more relevant signal. That
+  is an expectation, not a measurement.
+- **Ambiguous questions are still at 0.47** for all three methods, as expected: fusion
+  combines retrievers, but neither can find evidence for a question that lacks the key
+  terms.
+- **Hybrid has the best recall at depth (0.909 at 20).** That makes it the natural
+  candidate generator for the reranker in the next phase, which re-orders a deeper list.
+
 ## Running
 
 ```bash
 python scripts/create_eval_dataset.py                    # needs the LLM server
 python scripts/run_retrieval_eval.py --retriever dense --split test
 python scripts/run_retrieval_eval.py --retriever bm25 --split test
+python scripts/run_retrieval_eval.py --retriever hybrid --split test
 python scripts/compare_retrieval_runs.py data/experiments/<dense-run> data/experiments/<bm25-run>
 python scripts/export_review_sheet.py --per-type 5       # CSV for human spot checks
 ```

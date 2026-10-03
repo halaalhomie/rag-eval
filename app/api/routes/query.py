@@ -39,6 +39,7 @@ class ContextOut(BaseModel):
     title: str | None
     section: str | None
     url: str | None
+    components: dict[str, dict[str, float]] | None = None  # per-retriever rank/score (hybrid)
     text: str | None = None
 
 
@@ -112,6 +113,7 @@ def query(
                 title=c.title,
                 section=c.section,
                 url=c.metadata.get("url"),
+                components=c.components,
                 text=c.text if req.include_context_text else None,
             )
             for c in result.contexts

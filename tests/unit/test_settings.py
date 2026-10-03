@@ -17,7 +17,7 @@ def test_defaults_are_valid_and_match_documented_values():
     assert s.retrieval.rag_strategy is RagStrategy.BASELINE
     assert s.retrieval.top_k == 10
     assert s.retrieval.rerank_top_k == 5
-    assert s.retrieval.fusion_method is FusionMethod.RRF
+    assert s.retrieval.fusion_method is FusionMethod.LINEAR
     assert s.adaptive.relevance_threshold == 0.65
     assert s.adaptive.evidence_threshold == 0.70
     assert s.adaptive.max_corrective_iterations == 2

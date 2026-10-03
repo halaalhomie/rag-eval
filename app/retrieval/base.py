@@ -25,6 +25,9 @@ class RetrievalResult(BaseModel):
     start_char: int
     end_char: int
     metadata: dict[str, Any] = Field(default_factory=dict)  # title, url, category, ...
+    # Fused results only: rank and score in each component list, e.g.
+    # {"dense": {"rank": 3, "score": 0.81}, "bm25": {"rank": 1, "score": 12.4}}
+    components: dict[str, dict[str, float]] | None = None
 
     @property
     def title(self) -> str | None:

@@ -19,6 +19,7 @@ from app.retrieval.base import MetadataFilter
 from app.retrieval.bm25 import build_bm25
 from app.retrieval.dense import DenseRetriever, SessionFactory
 from app.retrieval.embeddings import Embedder
+from app.retrieval.hybrid import HybridRetriever
 
 
 class Pipeline(Protocol):
@@ -54,12 +55,31 @@ def _bm25(settings: Settings, c: Components) -> Pipeline:
     return BaselineRAG(build_bm25(settings, c.session_factory), c.llm, settings, name="bm25")
 
 
+def build_hybrid(settings: Settings, c: Components) -> HybridRetriever:
+    r = settings.retrieval
+    return HybridRetriever(
+        {
+            "dense": DenseRetriever(c.embedder, r.similarity_metric, c.session_factory),
+            "bm25": build_bm25(settings, c.session_factory),
+        },
+        {"dense": r.dense_weight, "bm25": r.bm25_weight},
+        method=r.fusion_method,
+        rrf_k=r.rrf_k,
+        candidates=r.retrieval_candidates,
+    )
+
+
+def _hybrid(settings: Settings, c: Components) -> Pipeline:
+    return BaselineRAG(build_hybrid(settings, c), c.llm, settings, name="hybrid")
+
+
 BUILDERS = {
     RagStrategy.BASELINE: _baseline,
     # "dense" is experiment A (dense RAG); today it is the baseline pipeline. It gets its
     # own builder only if the two diverge.
     RagStrategy.DENSE: _baseline,
     RagStrategy.BM25: _bm25,
+    RagStrategy.HYBRID: _hybrid,
 }
 
 

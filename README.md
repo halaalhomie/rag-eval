@@ -51,7 +51,8 @@ config validation.
 | 3 | Baseline dense RAG: local embeddings, pgvector search, LLM provider layer, cited answers | done |
 | 4 | Evaluation dataset (316 synthetic, validated items), retrieval metrics, dense baseline | done |
 | 5 | BM25 (tokenizer and k1/b chosen on dev; paired comparison with dense) | done |
-| 6–8 | Hybrid (RRF), reranking, parent-child | planned |
+| 6 | Hybrid retrieval (weighted RRF / linear fusion; config chosen on dev by a fixed rule) | done |
+| 7–8 | Reranking, parent-child | planned |
 | 9–12 | Query rewriting, Corrective RAG, Self-RAG-inspired loop, claim verification | planned |
 | 13–18 | Observability, experiment runner, benchmarks, docs, deployment | planned |
 
@@ -86,24 +87,31 @@ each question's required evidence spans found in the top 5.
 |---|---:|---:|---:|---:|---:|---:|
 | Dense RAG | 0.701 (95% CI 0.641–0.759) | 0.624 (0.573–0.682) | TBD | TBD | TBD | TBD |
 | BM25 | **0.791** (0.740–0.842) | **0.725** (0.671–0.776) | TBD | TBD | TBD | TBD |
-| Hybrid | TBD | TBD | TBD | TBD | TBD | TBD |
+| Hybrid | **0.802** (0.750–0.852) | 0.723 (0.672–0.776) | TBD | TBD | TBD | TBD |
 | Hybrid + Reranker | TBD | TBD | TBD | TBD | TBD | TBD |
 | Hybrid + Reranker + Rewrite | TBD | TBD | TBD | TBD | TBD | TBD |
 | Corrective RAG | TBD | TBD | TBD | TBD | TBD | TBD |
 | Self-RAG-inspired | TBD | TBD | TBD | TBD | TBD | TBD |
 
-Retrieval alone takes 24 ms at p50 for dense and 3.9 ms for BM25. End-to-end latency,
-cost and the generation metrics stay TBD until the generation evaluation runs.
+Retrieval alone takes 24 ms at p50 for dense, 3.9 ms for BM25 and 39 ms for hybrid.
+End-to-end latency, cost and the generation metrics stay TBD until the generation
+evaluation runs.
 
 BM25 beats dense retrieval significantly (paired difference in Evidence Recall@5 +0.090,
 95% CI [+0.034, +0.143]). **Part of that lead is lexical bias in the synthetic questions**;
 see [docs/evaluation.md](docs/evaluation.md#bm25-vs-dense-test-split). Dense retrieval is
 better on comparison questions, and neither helps ambiguous ones (0.47 each).
 
+Hybrid fusion is significantly better than dense retrieval, but **not significantly
+different from BM25 overall** (+0.011, 95% CI [−0.024, +0.048]). It gains on semantic,
+multi-hop and comparison questions, loses on numerical ones, and is best or tied-best on 6
+of 8 question types.
+
 ```bash
 python scripts/create_eval_dataset.py                       # generate (needs the LLM server)
 python scripts/run_retrieval_eval.py --retriever dense --split test
 python scripts/run_retrieval_eval.py --retriever bm25 --split test
+python scripts/run_retrieval_eval.py --retriever hybrid --split test
 python scripts/compare_retrieval_runs.py data/experiments/<run-a> data/experiments/<run-b>
 ```
 
@@ -231,7 +239,7 @@ app/
   config/         validated settings
   db/             SQLAlchemy models, session, schema init
   ingestion/      loaders, Hugo preprocessing, parent/child chunking, pipeline
-  retrieval/      retriever interface, embeddings, dense (pgvector), BM25 + analyzer; hybrid next
+  retrieval/      retriever interface, embeddings, dense (pgvector), BM25 + analyzer, hybrid fusion
   rag/            strategies (baseline), prompts; graph/graders in phases 9–12
   generation/     LLM provider layer, structured output, citations, usage/cost
   evaluation/     synthetic dataset generation + validators, span labels, retrieval metrics/runner
