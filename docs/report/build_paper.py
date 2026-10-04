@@ -1,6 +1,6 @@
 """Build the RAG-Forge technical report (PDF) with ReportLab.
 
-All numbers are taken from the project's recorded runs, docs and commits (Phases 1-4).
+All numbers are taken from the project's recorded runs, docs and commits (Phases 1-6).
 
 Usage (macOS; uses the system Times New Roman / Arial / Courier New fonts):
     pip install reportlab
@@ -17,6 +17,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     BaseDocTemplate,
+    CondPageBreak,
     Frame,
     KeepTogether,
     ListFlowable,
@@ -59,6 +60,7 @@ GRID = colors.HexColor("#e1e0d9")
 SURFACE = colors.HexColor("#fcfcfb")
 BLUE = colors.HexColor("#2a78d6")
 ORANGE = colors.HexColor("#eb6834")
+AQUA = colors.HexColor("#1baf7a")
 PANEL = colors.HexColor("#f3f2ee")
 
 # ------------------------------------------------------------------ styles
@@ -189,15 +191,19 @@ def P(text, style=body):
 def H1(text):
     _sec[0] += 1
     _sec[1] = 0
+    # Start a new page if a heading would land with too little room for content after it.
+    story.append(CondPageBreak(130))
     story.append(Paragraph(f"{_sec[0]}&nbsp;&nbsp;{text}", h1))
 
 
 def H2(text):
     _sec[1] += 1
+    story.append(CondPageBreak(120))
     story.append(Paragraph(f"{_sec[0]}.{_sec[1]}&nbsp;&nbsp;{text}", h2))
 
 
 def H3(text):
+    story.append(CondPageBreak(70))
     story.append(Paragraph(text, h3))
 
 
@@ -289,8 +295,12 @@ def table(
         if (r - h) % 2 == 0:
             style.append(("BACKGROUND", (0, r), (-1, r), colors.HexColor("#f9f9f7")))
     t.setStyle(TableStyle(style))
-    story.append(Spacer(1, 4))
+    # The gap is the table's own spaceBefore (not a Spacer flowable), so a preceding
+    # heading's keepWithNext binds to the table itself and is never stranded.
+    t.spaceBefore = 4
     # Short tables stay whole; splitting them strands a row or two under a repeated header.
+    if len(rows) > 8:
+        story.append(CondPageBreak(170))  # a split table starts with several rows, not one
     story.append(KeepTogether([t]) if len(rows) <= 8 else t)
     story.append(Spacer(1, 8))
 
@@ -368,7 +378,7 @@ def architecture_drawing():
         box(d, 62 + i * 100, 182, 96, 22, ep, bold=False, size=7.2)
     # core components
     box(d, 8, 100, 100, 50, "Ingestion", "loaders · Hugo resolver\nparent/child chunker")
-    box(d, 124, 100, 100, 50, "Retrieval", "Retriever protocol\ndense (pgvector)")
+    box(d, 124, 100, 100, 50, "Retrieval", "dense · BM25 · hybrid\nfusion (components)")
     box(d, 240, 100, 100, 50, "Generation", "LLMClient · structured\noutput · citations · cost")
     box(d, 356, 100, 106, 50, "Evaluation", "synthetic dataset · span\nlabels · metrics · runner")
     # storage and model servers
@@ -457,24 +467,25 @@ def pipeline_drawing():
 
 
 def results_chart():
-    data = [  # type, n, EvR@5, EvR@20
-        ("keyword_heavy", 31, 0.871, 0.903),
-        ("adversarial", 17, 0.824, 0.882),
-        ("simple_factual", 42, 0.821, 0.905),
-        ("semantic", 31, 0.672, 0.720),
-        ("multi_hop", 26, 0.641, 0.817),
-        ("numerical", 21, 0.571, 0.905),
-        ("ambiguous", 17, 0.471, 0.529),
-        ("comparison", 13, 0.449, 0.924),
+    """Evidence Recall@5 by question type for the three retrievers (test split)."""
+    data = [  # type, n, dense, bm25, hybrid
+        ("semantic", 31, 0.672, 0.710, 0.806),
+        ("multi_hop", 26, 0.641, 0.689, 0.760),
+        ("comparison", 13, 0.449, 0.368, 0.468),
+        ("keyword_heavy", 31, 0.871, 0.935, 0.935),
+        ("adversarial", 17, 0.824, 1.000, 1.000),
+        ("simple_factual", 42, 0.821, 0.905, 0.881),
+        ("numerical", 21, 0.571, 0.952, 0.809),
+        ("ambiguous", 17, 0.471, 0.471, 0.471),
     ]
-    W, H = 470, 250
+    series = (("Dense", BLUE), ("BM25", ORANGE), ("Hybrid", AQUA))
+    W, H = 470, 300
     left, right, top, bottom = 118, 40, 30, 28
     plot_w = W - left - right
     row_h = (H - top - bottom) / len(data)
-    bar_h = 8
+    bar_h = 6.5
     d = Drawing(W, H)
     d.add(Rect(0, 0, W, H, fillColor=SURFACE, strokeColor=None))
-    # gridlines + axis labels
     for v in (0, 0.25, 0.5, 0.75, 1.0):
         x = left + v * plot_w
         d.add(Line(x, bottom, x, H - top, strokeColor=GRID, strokeWidth=0.5))
@@ -493,29 +504,19 @@ def results_chart():
         String(
             left + plot_w / 2,
             4,
-            "Evidence Recall (fraction of required evidence spans retrieved)",
+            "Evidence Recall@5 (fraction of required evidence spans in the top 5)",
             fontName="Sans",
             fontSize=7.2,
             fillColor=INK2,
             textAnchor="middle",
         )
     )
-    # legend
     lx = left
-    for color, label in ((BLUE, "@5"), (ORANGE, "@20")):
+    for label, color in series:
         d.add(Rect(lx, H - 16, 9, 9, fillColor=color, strokeColor=None, rx=2, ry=2))
-        d.add(
-            String(
-                lx + 13,
-                H - 14.5,
-                f"Evidence Recall{label}",
-                fontName="Sans",
-                fontSize=7.5,
-                fillColor=INK,
-            )
-        )
-        lx += 105
-    for i, (t, n, v5, v20) in enumerate(data):
+        d.add(String(lx + 13, H - 14.5, label, fontName="Sans", fontSize=7.5, fillColor=INK))
+        lx += 70
+    for i, (t, n, *vals) in enumerate(data):
         yc = H - top - (i + 0.5) * row_h
         d.add(
             String(
@@ -528,13 +529,13 @@ def results_chart():
                 textAnchor="end",
             )
         )
-        for j, (v, color) in enumerate(((v5, BLUE), (v20, ORANGE))):
-            y = yc + (1 if j == 0 else -bar_h - 1)
+        for j, (v, (_, color)) in enumerate(zip(vals, series, strict=True)):
+            y = yc + bar_h * 0.5 + 1 - j * (bar_h + 1)
             d.add(
                 Rect(
                     left,
                     y,
-                    v * plot_w,
+                    max(v * plot_w, 0.5),
                     bar_h,
                     fillColor=color,
                     strokeColor=SURFACE,
@@ -546,10 +547,10 @@ def results_chart():
             d.add(
                 String(
                     left + v * plot_w + 3,
-                    y + 1.5,
+                    y + 0.8,
                     f"{v:.2f}",
                     fontName="Sans",
-                    fontSize=6.8,
+                    fontSize=6.3,
                     fillColor=INK2,
                 )
             )
@@ -565,7 +566,7 @@ def on_page(canvas, doc):
         canvas.drawString(
             20 * mm,
             A4[1] - 12 * mm,
-            "RAG-Forge: Evaluation-Driven Adaptive RAG · Technical Report (Phases 1–4)",
+            "RAG-Forge: Evaluation-Driven Adaptive RAG · Technical Report (Phases 1–6)",
         )
     canvas.drawRightString(A4[0] - 20 * mm, 10 * mm, f"{doc.page}")
     canvas.restoreState()
@@ -580,7 +581,7 @@ doc = BaseDocTemplate(
     bottomMargin=16 * mm,
     title="RAG-Forge: Building an Evaluation-Driven RAG System",
     author="Nabeel Ahmad",
-    subject="Technical report, Phases 1-4",
+    subject="Technical report, Phases 1-6",
 )
 frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id="f")
 doc.addPageTemplates([PageTemplate(id="p", frames=[frame], onPage=on_page)])
@@ -593,39 +594,39 @@ P(
     title,
 )
 P(
-    "Technical report covering Phases 1–4: infrastructure, ingestion, baseline dense RAG, "
-    "evaluation dataset and retrieval benchmark",
+    "Technical report covering Phases 1–6: infrastructure, ingestion, baseline dense RAG, "
+    "evaluation dataset, BM25 and hybrid retrieval",
     subtitle,
 )
 P("Nabeel Ahmad", author_style)
 P(
-    "RAG-Forge project · September 2026 · work in progress · repository commits f2854e3 → f46239c",
+    "RAG-Forge project · October 2026 · work in progress · repository commits f2854e3 → 726e2a7",
     meta,
 )
 
 abstract = (
     "<b>Abstract.</b> Retrieval-augmented generation (RAG) systems are commonly judged by "
-    "inspecting a handful of answers. We describe the first four phases of RAG-Forge, a "
+    "inspecting a handful of answers. We describe the first six phases of RAG-Forge, a "
     "system built so that every technique can be switched on or off and measured against a "
     "baseline. The system runs entirely on a laptop-class machine (Apple M1, 8 GB) using "
     "open models: bge-small-en-v1.5 embeddings, PostgreSQL with pgvector, and "
     "Qwen2.5-3B-Instruct served locally through MLX. We ingest a pinned snapshot of the "
-    "Kubernetes documentation (551 documents, 3,855 chunks), resolving the Hugo template "
-    "syntax that would otherwise pollute both lexical and dense indexes, and we chunk with a "
-    "structure-aware parent/child scheme whose design choices were each driven by "
-    "measurements on the real corpus. Auditing the chunker against the embedder's actual "
-    "tokenizer exposed silent truncation of 4% of embedding inputs, which a calibrated "
-    "token estimator removed. For evaluation we generate 316 synthetic questions across nine "
-    "types (including multi-hop over real cross-document links, code-constructed false "
-    "premises and corpus-verified unanswerable questions). Every item passes deterministic "
-    "validators (only 17% of 1,901 generations were kept), and relevance is anchored to "
-    "exact character spans rather than chunk identifiers, so labels survive re-chunking. We "
-    "introduce Evidence Recall@K for multi-span questions and report a dense-retrieval "
-    "baseline on the held-out test split: Evidence Recall@5 of 0.701 (95% bootstrap CI "
-    "0.641–0.759) and MRR of 0.624 (0.573–0.682). The baseline is weakest on ambiguous (0.47) "
-    "and comparison (0.45) questions, pointing directly at query rewriting and reranking, "
-    "the next techniques to be evaluated. We document the failure modes found at each step, "
-    "including those of the evaluation data itself."
+    "Kubernetes documentation (551 documents, 3,855 chunks) with a structure-aware "
+    "parent/child chunker whose design was driven by measurements on the real corpus; an "
+    "audit against the embedder's tokenizer exposed, and a calibrated estimator removed, "
+    "silent truncation of 4% of embedding inputs. For evaluation we generate 316 synthetic "
+    "questions across nine types. Every item passes deterministic validators (only 17% of "
+    "1,901 generations were kept), and relevance is anchored to exact character spans, so "
+    "labels survive re-chunking. We then compare dense, BM25 and hybrid retrieval under a "
+    "strict protocol: every configuration is chosen on a dev split, partly by rules fixed "
+    "before tuning, and the held-out test split is evaluated once, with paired bootstrap "
+    "tests. On test, BM25 beats dense retrieval (Evidence Recall@5 0.791 vs 0.701; paired "
+    "difference +0.090, 95% CI [+0.034, +0.143]). Hybrid fusion reaches 0.802 and is "
+    "significantly better than dense retrieval, but statistically indistinguishable from "
+    "BM25 overall. Per question type, hybrid gains on semantic (+0.10), multi-hop (+0.07) "
+    "and comparison (+0.10) questions and loses on numerical ones (−0.14). We trace much of "
+    "BM25's advantage to lexical bias in passage-derived synthetic questions, and we "
+    "document the failure modes found at each step, including those of the evaluation data."
 )
 story.append(
     Table(
@@ -657,13 +658,13 @@ P(
     "held-out questions, with quality, latency and cost reported together."
 )
 P(
-    "This report covers the first four of eighteen planned phases: the infrastructure, the "
-    "ingestion pipeline, a baseline dense RAG pipeline, and the evaluation dataset and "
-    "retrieval benchmark on which all later comparisons will rest. The later techniques are "
-    "<i>not</i> implemented yet, and no results are reported for them. We describe the "
-    "architecture and every design choice, and we give particular attention to the evaluation "
-    "dataset: how each question type is generated, how items are validated, and where the "
-    "data is still weak."
+    "This report covers the first six of eighteen planned phases: the infrastructure, the "
+    "ingestion pipeline, a baseline dense RAG pipeline, the evaluation dataset and retrieval "
+    "benchmark, BM25, and hybrid retrieval. Reranking, query rewriting, corrective and "
+    "Self-RAG-inspired behaviour and claim verification are <i>not</i> implemented yet, and "
+    "no results are reported for them. We describe the architecture and every design "
+    "choice, give particular attention to how each evaluation question type is generated "
+    "and validated, and report the first controlled comparison between retrieval methods."
 )
 H3("Contributions of this phase")
 bullets(
@@ -676,7 +677,10 @@ bullets(
         "nine question types; 17% of generator outputs survive deterministic validation; three "
         "rounds of manual pilot review each changed the generator design (§6).",
         "<b>Evidence Recall@K</b> for questions that need several pieces of evidence, with "
-        "bootstrap confidence intervals and per-type breakdowns (§7).",
+        "bootstrap confidence intervals, paired comparisons and per-type breakdowns (§7).",
+        "<b>A controlled comparison of dense, BM25 and hybrid retrieval</b>: dev-only tuning "
+        "under selection rules fixed in advance, a single test evaluation, and an analysis "
+        "showing how much of BM25's lead comes from the dataset's lexical bias (§8).",
         "<b>Measurement-driven ingestion.</b> Corpus-specific template resolution, and a chunker "
         "whose parameters were corrected by audits against the real tokenizer and the real "
         "corpus (§4).",
@@ -764,6 +768,16 @@ table(
             "Runs locally beside the LLM within 8 GB of RAM",
         ],
         [
+            "Lexical retrieval",
+            "In-process Okapi BM25 with an analyzer for technical identifiers",
+            "PostgreSQL ts_rank is not BM25; ~4k chunks index in memory in about 1 s",
+        ],
+        [
+            "Fusion",
+            "Weighted RRF or min-max linear fusion of dense and BM25 lists",
+            "Rank-based RRF avoids reconciling score scales; linear chosen on dev (§8.1)",
+        ],
+        [
             "LLM",
             "Qwen2.5-3B-Instruct [12], 4-bit, served by mlx-lm 0.31.3",
             "Free, offline, uses the M1 GPU; its OpenAI-compatible server needs no custom client",
@@ -823,7 +837,7 @@ numbered(
 H2("Engineering practice")
 P(
     "The work was committed phase by phase, with each phase tested before its commit. At "
-    "commit <font face='Mono'>f46239c</font> the suite has 144 tests:"
+    "commit <font face='Mono'>726e2a7</font> the suite has 167 tests:"
 )
 bullets(
     [
@@ -1001,7 +1015,7 @@ P(
 )
 
 # ------------------------------------------------------------------ 5 Baseline RAG
-H1("Baseline RAG pipeline")
+H1("Retrieval and generation pipelines")
 H2("Dense retrieval")
 P(
     "All retrievers implement one method, <font face='Mono'>retrieve(query, k, filters)</font>, "
@@ -1024,6 +1038,48 @@ bullets(
 P(
     "Query latency is ~25 ms once the model is loaded. The first query after process start "
     "paid ~12 s of model loading, so the API preloads the embedder at startup."
+)
+
+H2("BM25")
+P(
+    "BM25 [4] is implemented in-process rather than with PostgreSQL full-text search, whose "
+    "<font face='Mono'>ts_rank</font> lacks BM25's IDF and saturating term frequency; a "
+    "\u201cBM25\u201d result built on it would be mislabelled. The inverted index uses "
+    "Lucene-form IDF, ln(1 + (N − df + 0.5)/(df + 0.5)), which is never negative, and indexes "
+    "the same <font face='Mono'>Title &gt; Section</font> input as dense retrieval. The index "
+    "(3,855 chunks, 21,030 terms) builds in about 1.1 s. A cheap "
+    "<font face='Mono'>count(*), max(created_at)</font> check before each query rebuilds it "
+    "after re-ingestion, so it cannot go stale. Ties break by chunk ID, and queries take "
+    "3.9 ms at p50."
+)
+P(
+    "The analyzer lowercases and drops stopwords, and can additionally emit compound "
+    "identifiers whole (<font face='Mono'>kube-apiserver</font>, "
+    "<font face='Mono'>spec.replicas</font>), CamelCase components "
+    "(<font face='Mono'>PodDisruptionBudget</font> → pod, disruption, budget) and light "
+    "stems. Which options to enable was decided on the dev split (§8.1)."
+)
+
+H2("Hybrid fusion")
+P(
+    "The hybrid retriever takes 50 candidates from each retriever and fuses the two lists, "
+    "by one of two methods:"
+)
+bullets(
+    [
+        "<b>weighted Reciprocal Rank Fusion [5]:</b> score = Σ<sub>r</sub> w<sub>r</sub> / "
+        "(k + rank<sub>r</sub>); it uses ranks only, so the incompatible score scales (cosine "
+        "similarity vs unbounded BM25) never interact",
+        "<b>linear fusion:</b> score = Σ<sub>r</sub> w<sub>r</sub> · minmax<sub>r</sub>(score), "
+        "with each list normalised over its own candidates",
+    ]
+)
+P(
+    "Weights, method and k come from configuration. Every fused result carries its rank and "
+    "score in each component list, and the API returns them, so it is always visible why a "
+    "chunk ranked where it did. Hybrid queries take 39 ms at p50. Like BM25, hybrid is "
+    "registered as a strategy, so RAG with any of the three retrievers is the same pipeline "
+    "with a different retrieval stage."
 )
 
 H2("Provider-neutral LLM layer")
@@ -1530,87 +1586,211 @@ P(
     "198 queries overall, and only 13–42 per type, point estimates alone would overstate how "
     "precise these results are."
 )
+P(
+    "<b>Paired comparisons.</b> All systems answer the same questions, so a difference "
+    "between two systems is bootstrapped per query: the per-query differences are "
+    "resampled. This is much tighter than comparing two independent intervals. We also "
+    "report how many queries each system wins, loses and ties."
+)
+P(
+    "<b>Selection protocol.</b> Analyzer options, BM25 parameters and the fusion "
+    "configuration were chosen on the dev split only (88 answerable items). For fusion, the "
+    "selection rule was fixed before tuning (§8.1). The test split was evaluated once per "
+    "system, with the final configuration. Every dev run is kept as a committed report."
+)
 
 # ------------------------------------------------------------------ 8 Results
-H1("Baseline results")
+H1("Retrieval results")
 P(
-    "We evaluate dense retrieval, which is also the retrieval stage of the baseline RAG "
-    "pipeline, on the test split. Setup:"
+    "All runs use dataset version <font face='Mono'>c6009ef85e53</font>. On the test split, "
+    "198 answerable items are evaluated (21 unanswerable items are excluded), with 0 "
+    "unmapped evidence spans, and reruns reproduce every value exactly. Dense retrieval uses "
+    "bge-small-en-v1.5 with the <font face='Mono'>Title &gt; Section</font> prefix over a "
+    "cosine HNSW index."
 )
-bullets(
+
+H2("Configuration choices on the dev split")
+H3("BM25 analyzer and parameters")
+table(
     [
-        "bge-small-en-v1.5 embeddings with the <font face='Mono'>Title &gt; Section</font> prefix",
-        "cosine HNSW index",
-        "198 answerable test items evaluated (21 unanswerable excluded)",
-        "0 unmapped evidence spans",
-    ]
+        ["Analyzer (k1 = 1.2, b = 0.75)", "EvR@5", "EvR@10", "MRR", "NDCG@10"],
+        ["<i>dense retrieval (reference)</i>", "0.748", "0.847", "0.617", "0.594"],
+        ["words", "0.818", "0.871", "0.780", "0.729"],
+        ["words + stem", "0.820", "0.849", "0.782", "0.731"],
+        ["<b>words + compound (chosen)</b>", "0.827", "0.871", "0.788", "0.737"],
+        ["words + compound + camel", "0.817", "0.869", "0.752", "0.712"],
+        ["words + compound + camel + stem", "0.820", "0.850", "0.777", "0.726"],
+    ],
+    [0.44 * TW, 0.14 * TW, 0.14 * TW, 0.14 * TW, 0.14 * TW],
+    "BM25 analyzer ablation on the dev split (88 items).",
+    align_right_from=1,
 )
 P(
-    "The run is recorded as <font face='Mono'>20260928T080636-retrieval-dense-test</font> "
-    "on dataset version <font face='Mono'>c6009ef85e53</font>, and a rerun reproduced every "
-    "value exactly."
+    "No analyzer variant is significantly better than plain words: every paired 95% "
+    "interval includes zero. Compound identifiers changed only 6 of 88 queries (4 better, "
+    "2 worse). CamelCase splitting leaned negative on MRR (−0.027, CI [−0.061, +0.005]; 12 "
+    "queries worse, 4 better), because splitting identifiers into common words such as "
+    "<i>pod</i> dilutes their specificity. We chose words + compound for its best point "
+    "estimates on every metric. A k1 × b grid ({0.9, 1.2, 1.5} × {0.5, 0.75, 0.9}) was flat "
+    "(EvR@5 0.827–0.845, a spread of one or two queries), so the standard k1 = 1.2, b = 0.75 "
+    "were kept rather than fitting noise."
+)
+H3("Fusion configuration")
+P(
+    "The two retrievers are complementary on dev. Their combined top 5 covers 0.911 of the "
+    "required evidence spans, against 0.827 for BM25 and 0.748 for dense retrieval: 15 spans "
+    "are found only by dense retrieval and 30 only by BM25. The selection rule, fixed before "
+    "tuning, keeps the textbook default (RRF, equal weights, k = 60) unless another "
+    "configuration improves dev Evidence Recall@5 by more than one query's worth "
+    "(1/88 ≈ 0.011), with ties broken on MRR."
 )
 table(
     [
-        ["Metric", "Value", "95% bootstrap CI"],
-        ["Evidence Recall@5", "0.701", "0.641 – 0.759"],
-        ["Evidence Recall@10", "0.761", "0.710 – 0.815"],
-        ["MRR", "0.624", "0.573 – 0.682"],
-        ["NDCG@10", "0.595", "0.548 – 0.646"],
-        ["Chunk Recall@10", "0.711", "–"],
-        ["Doc Recall@5", "0.838", "–"],
-        ["Retrieval latency p50 / p95", "24 ms / 32 ms", "–"],
+        ["Configuration (dense weight w; BM25 = 1 − w)", "EvR@5", "EvR@10", "MRR", "NDCG@10"],
+        ["RRF, w = 0.5, k = 60 (default)", "0.826", "0.917", "0.780", "0.730"],
+        [
+            "RRF, k = 60, w = 0.3 / 0.4 / 0.6 / 0.7",
+            "0.803–0.826",
+            "0.891–0.917",
+            "0.703–0.805",
+            "0.672–0.744",
+        ],
+        [
+            "RRF, k = 10, w = 0.3 / 0.4 / 0.5 / 0.6 / 0.7",
+            "0.825–0.860",
+            "0.874–0.933",
+            "0.695–0.815",
+            "0.660–0.761",
+        ],
+        [
+            "linear, w = 0.3 / 0.4 / 0.6 / 0.7",
+            "0.830–0.854",
+            "0.894–0.917",
+            "0.731–0.819",
+            "0.695–0.770",
+        ],
+        ["<b>linear, w = 0.5 (chosen)</b>", "0.866", "0.917", "0.800", "0.756"],
     ],
-    [0.45 * TW, 0.2 * TW, 0.35 * TW],
-    "Dense retrieval, test split (n = 198).",
+    [0.44 * TW, 0.14 * TW, 0.14 * TW, 0.14 * TW, 0.14 * TW],
+    "Fusion grid on the dev split (ranges summarise rows; all 15 runs are committed).",
     align_right_from=1,
+)
+P("Four observations follow from this grid:")
+bullets(
+    [
+        "<b>The textbook default is no better than BM25 alone</b> (paired difference +0.001). "
+        "Equal-weight RRF at k = 60 lets the weaker dense list dilute BM25.",
+        "<b>RRF with k = 10 beats k = 60 at every weight</b>, a consistent pattern rather than "
+        "one lucky cell.",
+        "<b>Weighting dense above 0.5 hurts throughout.</b>",
+        "<b>The winner, linear fusion with w = 0.5, gains +0.040 Evidence Recall@5</b> (paired "
+        "CI [+0.011, +0.085]). The evidence is thin: only 4 of 88 queries changed, all for "
+        "the better. Picking the best of 15 configurations invites a winner's-curse effect, "
+        "so the test result is the number to trust.",
+    ]
+)
+
+H2("Test-split comparison")
+table(
+    [
+        ["Metric", "Dense", "BM25", "Hybrid", "Hybrid − dense (95% CI)", "Hybrid − BM25 (95% CI)"],
+        [
+            "Evidence Recall@5",
+            "0.701",
+            "0.791",
+            "<b>0.802</b>",
+            "<b>+0.101</b> [+0.056, +0.146]",
+            "+0.011 [−0.024, +0.048]",
+        ],
+        [
+            "Evidence Recall@10",
+            "0.761",
+            "0.844",
+            "<b>0.859</b>",
+            "<b>+0.098</b> [+0.056, +0.140]",
+            "+0.015 [−0.018, +0.048]",
+        ],
+        [
+            "MRR",
+            "0.624",
+            "<b>0.725</b>",
+            "0.723",
+            "<b>+0.099</b> [+0.059, +0.139]",
+            "−0.002 [−0.034, +0.029]",
+        ],
+        [
+            "NDCG@10",
+            "0.595",
+            "<b>0.715</b>",
+            "0.714",
+            "<b>+0.119</b> [+0.085, +0.150]",
+            "−0.001 [−0.025, +0.024]",
+        ],
+        ["EvR@5 95% CI", "0.641–0.759", "0.740–0.842", "0.750–0.852", "", ""],
+        ["Latency p50 / p95", "24 / 32 ms", "3.9 / 5.5 ms", "39 / 44 ms", "", ""],
+    ],
+    [0.20 * TW, 0.115 * TW, 0.115 * TW, 0.11 * TW, 0.23 * TW, 0.23 * TW],
+    "Test-split comparison (n = 198). Differences are paired bootstrap estimates. BM25 − "
+    "dense: Evidence Recall@5 +0.090 [+0.034, +0.143], MRR +0.101 [+0.046, +0.155].",
+    align_right_from=1,
+)
+P(
+    "BM25 is significantly better than dense retrieval on every headline metric. It wins 36 "
+    "queries at Evidence Recall@5 and loses 13. Hybrid fusion is significantly better than "
+    "dense retrieval, but not significantly different from BM25 overall (12 queries better, "
+    "8 worse, 178 tied). Hybrid has the highest Evidence Recall@20 of the three (0.909), at "
+    "about ten times BM25's latency."
 )
 figure(
     results_chart(),
-    "Evidence Recall@5 and @20 by question type (dense baseline, test split). The gap "
-    "between the two bars shows how much evidence is retrieved but ranked below position 5. "
-    "Values are also in Table 12.",
+    "Evidence Recall@5 by question type for the three retrievers (test split). Values are "
+    "also in Table 14.",
 )
 table(
     [
-        ["Type", "n", "@1", "@5", "@10", "@20", "MRR"],
-        ["keyword_heavy", "31", "0.565", "0.871", "0.871", "0.903", "0.707"],
-        ["adversarial", "17", "0.627", "0.824", "0.882", "0.882", "0.734"],
-        ["simple_factual", "42", "0.559", "0.821", "0.845", "0.905", "0.678"],
-        ["semantic", "31", "0.387", "0.672", "0.704", "0.720", "0.531"],
-        ["multi_hop", "26", "0.330", "0.641", "0.724", "0.817", "0.779"],
-        ["numerical", "21", "0.381", "0.571", "0.714", "0.905", "0.496"],
-        ["ambiguous", "17", "0.235", "0.471", "0.471", "0.529", "0.327"],
-        ["comparison", "13", "0.264", "0.449", "0.737", "0.924", "0.610"],
-        ["All", "198", "0.443", "0.701", "0.761", "0.831", "0.624"],
+        ["Type", "n", "Dense", "BM25", "Hybrid", "Hybrid @20"],
+        ["semantic", "31", "0.672", "0.710", "<b>0.806</b>", "0.903"],
+        ["multi_hop", "26", "0.641", "0.689", "<b>0.760</b>", "0.881"],
+        ["comparison", "13", "0.449", "0.368", "<b>0.468</b>", "0.924"],
+        ["keyword_heavy", "31", "0.871", "<b>0.935</b>", "<b>0.935</b>", "1.000"],
+        ["adversarial", "17", "0.824", "<b>1.000</b>", "<b>1.000</b>", "1.000"],
+        ["simple_factual", "42", "0.821", "<b>0.905</b>", "0.881", "0.929"],
+        ["numerical", "21", "0.571", "<b>0.952</b>", "0.809", "1.000"],
+        ["ambiguous", "17", "0.471", "0.471", "0.471", "0.529"],
+        ["All", "198", "0.701", "0.791", "0.802", "0.909"],
     ],
-    [0.22 * TW, 0.1 * TW, 0.12 * TW, 0.12 * TW, 0.12 * TW, 0.12 * TW, 0.2 * TW],
-    "Evidence Recall@K and MRR by question type.",
+    [0.24 * TW, 0.1 * TW, 0.165 * TW, 0.165 * TW, 0.165 * TW, 0.165 * TW],
+    "Evidence Recall@5 by question type; best per row in bold.",
     align_right_from=1,
     bold_last=True,
 )
 
 H2("Discussion")
-P(
-    "Per-type samples are small, so these observations are directions for the next "
-    "experiments rather than conclusions:"
-)
+P("Per-type samples are small (13–42 items), so these are directions, not conclusions:")
 bullets(
     [
-        "<b>Ambiguous questions are hardest (0.47 at 5; 0.53 at 20).</b> Recall hardly improves "
-        "with depth: the evidence is not being ranked low, it is not being retrieved at all. "
-        "Reranking cannot fix this; query rewriting is the matching intervention.",
-        "<b>Comparison (0.45 → 0.92) and numerical (0.57 → 0.91) gain most from 5 to 20.</b> The "
-        "evidence is present in the candidate list but poorly ranked, which is where a "
-        "cross-encoder reranker over a deeper candidate list should help.",
-        "<b>Multi-hop has high MRR (0.78) but only 0.64 Evidence Recall@5.</b> One half of the "
-        "evidence is found early and the other half often is not. MRR alone would suggest "
-        "multi-hop is easy; Evidence Recall shows otherwise.",
-        "<b>Semantic questions (0.67) trail simple factual ones (0.82)</b>, as expected when the "
-        "query avoids the passage's wording.",
-        "<b>Keyword-heavy questions are already strong for dense retrieval (0.87).</b> Part of "
-        "this is likely the lexical bias of passage-derived questions (§6.7). The BM25 "
-        "experiment will show how much exact matching adds.",
+        "<b>Part of BM25's lead is an artefact of the dataset.</b> Adversarial questions are "
+        "generated from a fact statement written in the passage's own words and near-quote "
+        "their evidence; BM25 retrieves all of them (1.00). Numerical questions share exact "
+        "numbers and units with their evidence (BM25 +0.38 over dense). On semantic questions, "
+        "which were filtered for low word overlap, BM25's lead shrinks to +0.04. That is a "
+        "fairer indication of the difference on paraphrased queries (§6.7).",
+        "<b>Hybrid gains where questions are least lexical</b> (semantic +0.10, multi-hop "
+        "+0.07, comparison +0.10 over BM25), and <b>loses where exact matching decides</b> "
+        "(numerical −0.14, simple factual −0.02). It is best or tied-best on 6 of 8 types, "
+        "which makes it the most robust of the three. We expect real user queries to be less "
+        "lexically aligned with the documentation than these passage-derived questions, but "
+        "that is an expectation, not a measurement.",
+        "<b>Ambiguous questions stay at 0.47 for every method.</b> Fusion combines retrievers, "
+        "but neither can find evidence for a question that lacks the key terms. Recall "
+        "barely grows with depth (0.53 at 20), so this is a query problem that only query "
+        "rewriting can address.",
+        "<b>Much evidence is retrieved but ranked low.</b> Hybrid's Evidence Recall rises "
+        "from 0.80 at 5 to 0.91 at 20, and for comparison questions from 0.47 to 0.92. A "
+        "cross-encoder reranker over the hybrid candidate list is the matching next step.",
+        "<b>Multi-hop has high MRR but lower Evidence Recall.</b> Dense retrieval's MRR on "
+        "multi-hop is 0.78, but its Evidence Recall@5 is only 0.64: one half of the evidence "
+        "is found early and the other half often is not.",
     ]
 )
 
@@ -1630,6 +1810,12 @@ bullets(
         "<b>Code samples are not inlined.</b> <font face='Mono'>code_sample</font> shortcodes "
         "reference manifests outside the fetched subtree, so answers that exist only inside "
         "example YAML are absent from the corpus.",
+        "<b>Lexical bias shapes the retrieval comparison.</b> Passage-derived questions favour "
+        "BM25, so the overall ranking of methods on this set may not transfer to real queries. "
+        "The per-type results and the semantic subset are the more transferable signal.",
+        "<b>Configuration choices rest on a small dev split.</b> With 88 dev items, several "
+        "choices were decided by a handful of queries. Selection rules were fixed in advance "
+        "and the test split was evaluated once, but a winner's-curse effect remains possible.",
         "<b>Only retrieval is evaluated so far.</b> Faithfulness, answer relevance, citation "
         "correctness, end-to-end latency and cost are not yet measured over the dataset.",
     ]
@@ -1643,9 +1829,7 @@ P(
 )
 bullets(
     [
-        "BM25 (Phase 5)",
-        "hybrid retrieval with weighted Reciprocal Rank Fusion (Phase 6)",
-        "cross-encoder reranking (Phase 7)",
+        "cross-encoder reranking of the hybrid candidate list (Phase 7)",
         "parent-child context expansion (Phase 8)",
         "query analysis and rewriting (Phase 9)",
         "corrective retrieval, with a small-model relevance grader (Phase 10)",
@@ -1670,7 +1854,12 @@ CODE(
     "EMBEDDING_DEVICE=mps python scripts/ingest.py --corpus kubernetes\n"
     "python scripts/audit_chunk_tokens.py                 # Table 3\n"
     "python scripts/create_eval_dataset.py                # seed 42; top-up: --extend --seed 43\n"
-    "python scripts/run_retrieval_eval.py --retriever dense --split test   # Tables 11-12"
+    "python scripts/run_retrieval_eval.py --retriever dense --split test\n"
+    "python scripts/run_retrieval_eval.py --retriever bm25 --split test\n"
+    "python scripts/run_retrieval_eval.py --retriever hybrid --split test  # Tables 13-14\n"
+    "python scripts/compare_retrieval_runs.py data/experiments/<run-a> data/experiments/<run-b>\n"
+    "BM25_STEMMING=true python scripts/run_retrieval_eval.py --retriever bm25 --split dev \\\n"
+    "    --out-dir data/experiments/ablations --label words-compound-stem   # dev ablations"
 )
 table(
     [
@@ -1692,12 +1881,14 @@ table(
         ],
         [
             "Code",
-            "Commits f2854e3 (Phase 1), 24659a9 (Phase 2), ab6ad5d (Phase 3), f46239c (Phase 4)",
+            "Commits f2854e3 (Phase 1), 24659a9 (Phase 2), ab6ad5d (Phase 3), f46239c (Phase 4), "
+            "9f49caf (Phase 5), 726e2a7 (Phase 6)",
         ],
         [
             "Key defaults",
             "CHILD_CHUNK_SIZE 360, CHILD_CHUNK_OVERLAP 60, PARENT_CHUNK_SIZE 1600; "
-            "cosine; TOP_K 10; LLM temperature 0; 144 tests passing",
+            "cosine; TOP_K 10; BM25 words+compound, k1 1.2, b 0.75; fusion linear 0.5/0.5 over 50 "
+            "candidates per retriever; LLM temperature 0; 167 tests passing",
         ],
     ],
     [0.18 * TW, 0.82 * TW],
