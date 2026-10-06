@@ -152,7 +152,11 @@ class RetrievalSettings(BaseSettings):
     bm25_stemming: bool = False
 
     reranker_model: str = "BAAI/bge-reranker-base"
-    rerank_candidates: int = Field(default=30, ge=1, le=500)
+    reranker_device: str = "cpu"  # "mps" on Apple Silicon
+    reranker_batch_size: int = Field(default=16, ge=1, le=256)
+    reranker_max_length: int = Field(default=512, ge=32, le=8192)
+    # 20 chosen on dev: depths 20/30/50 tie on EvR@5, so the cheapest wins (docs/retrieval.md).
+    rerank_candidates: int = Field(default=20, ge=1, le=500)
     rerank_top_k: int = Field(default=5, ge=1, le=100)
 
     @model_validator(mode="after")

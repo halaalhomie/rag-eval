@@ -20,6 +20,7 @@ from app.retrieval.bm25 import build_bm25
 from app.retrieval.dense import DenseRetriever, SessionFactory
 from app.retrieval.embeddings import Embedder
 from app.retrieval.hybrid import HybridRetriever
+from app.retrieval.reranker import RerankingRetriever, get_reranker
 
 
 class Pipeline(Protocol):
@@ -73,6 +74,25 @@ def _hybrid(settings: Settings, c: Components) -> Pipeline:
     return BaselineRAG(build_hybrid(settings, c), c.llm, settings, name="hybrid")
 
 
+def build_hybrid_rerank(settings: Settings, c: Components) -> RerankingRetriever:
+    return RerankingRetriever(
+        build_hybrid(settings, c),
+        get_reranker(settings),
+        candidates=settings.retrieval.rerank_candidates,
+        name="hybrid_rerank",
+    )
+
+
+def _hybrid_rerank(settings: Settings, c: Components) -> Pipeline:
+    return BaselineRAG(
+        build_hybrid_rerank(settings, c),
+        c.llm,
+        settings,
+        name="hybrid_rerank",
+        default_top_k=settings.retrieval.rerank_top_k,
+    )
+
+
 BUILDERS = {
     RagStrategy.BASELINE: _baseline,
     # "dense" is experiment A (dense RAG); today it is the baseline pipeline. It gets its
@@ -80,6 +100,7 @@ BUILDERS = {
     RagStrategy.DENSE: _baseline,
     RagStrategy.BM25: _bm25,
     RagStrategy.HYBRID: _hybrid,
+    RagStrategy.HYBRID_RERANK: _hybrid_rerank,
 }
 
 

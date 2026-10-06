@@ -1,8 +1,8 @@
 # Retrieval
 
 This document covers the retriever interface, and each retrieval method as it is
-implemented. Current status: **dense retrieval**, **BM25** and **hybrid fusion**. Reranking
-and parent-child expansion are added in later phases.
+implemented. Current status: **dense retrieval**, **BM25**, **hybrid fusion** and
+**cross-encoder reranking**. Parent-child expansion is added in a later phase.
 
 ## Interface
 
@@ -220,6 +220,81 @@ See [evaluation.md](evaluation.md#hybrid-vs-bm25-and-dense-test-split). Hybrid i
 significantly better than dense retrieval, and **statistically indistinguishable from
 BM25 overall**. It is better than BM25 on semantic, multi-hop and comparison questions,
 and worse on numerical ones.
+
+## Cross-encoder reranking
+
+[app/retrieval/reranker.py](../app/retrieval/reranker.py). A bi-encoder (dense retrieval)
+embeds the query and the passage separately. A cross-encoder reads them *together*, which
+is far more accurate and far more expensive, so it re-orders only a first-stage candidate
+list:
+
+```
+hybrid -> top RERANK_CANDIDATES (20) -> BAAI/bge-reranker-base -> top k
+```
+
+`RerankingRetriever` wraps any retriever; `hybrid_rerank` wraps hybrid. RAG with this
+strategy passes `RERANK_TOP_K` (5) contexts to the LLM by default, instead of `TOP_K`. The
+reranker sees the same `Title > Section` + text input as the other retrievers.
+
+**Every reranked result records**, in `components` (returned by `/query`):
+
+- `first_stage`: its rank and score before reranking. The first stage's own components,
+  such as hybrid's per-retriever ranks, are kept as well.
+- `reranker`: the raw cross-encoder score, plus its sigmoid as a 0–1 relevance
+  probability.
+- its `rank`: the final rank.
+
+```json
+"components": {
+  "dense": {"rank": 7, "score": 0.79}, "bm25": {"rank": 2, "score": 14.1},
+  "first_stage": {"rank": 4, "score": 0.83},
+  "reranker": {"score": 1.45, "probability": 0.81}
+}
+```
+
+**Implementation details that matter:**
+
+- **Raw scores need an explicit identity activation.** In sentence-transformers,
+  `CrossEncoder.predict(activation_fn=None)` does *not* mean "no activation". It falls
+  back to the model default, a sigmoid. Passing `None` would have returned probabilities
+  labelled as raw scores, and applying the sigmoid again would have squashed every value
+  into 0.5–0.73. The code passes `torch.nn.Identity()` and applies the sigmoid itself.
+- **Truncation is negligible.** The reranker uses a different tokenizer (XLM-RoBERTa)
+  and reads question and passage together. With a median question of 22 tokens, only 3 of
+  3,855 chunks (0.1%) push the pair past 512 tokens.
+- **The relevance probability is a much better grader than the local LLM.** For the
+  passage "all deletes are graceful within 30 seconds", which the 3B LLM judged *not* to
+  contain the default grace period on 3 of 3 tries, the reranker gives probability **0.81**.
+  An unrelated ConfigMap passage gets about 0.00. This is why corrective retrieval will use
+  the reranker as its relevance grader.
+- **Device:** `RERANKER_DEVICE` defaults to `cpu` (Docker). On the M1, MPS is faster:
+  30 pairs of about 400 tokens took 2.5 s on MPS versus 3.3 s on CPU.
+
+### Choosing the candidate depth (dev)
+
+**Rule, fixed before tuning:** choose the *smallest* depth whose dev Evidence Recall@5 is
+within one query (0.011) of the best. Ties go to the cheaper option, because latency grows
+linearly with depth.
+
+| Depth (`RERANK_CANDIDATES`) | EvR@5 | EvR@10 | MRR | NDCG@10 | Latency p50 (MPS) |
+|---|---:|---:|---:|---:|---:|
+| *hybrid, no reranking* | *0.866* | *0.917* | *0.800* | *0.756* | *0.04 s* |
+| **20 (chosen)** | 0.869 | **0.956** | **0.867** | **0.819** | 1.8 s |
+| 30 | 0.869 | 0.950 | 0.867 | 0.818 | 3.0 s |
+| 50 | 0.869 | 0.939 | 0.866 | 0.814 | 4.6 s |
+
+- All depths tie on Evidence Recall@5, so **20** wins. **Deeper is slightly worse at 10**
+  (0.956 → 0.939): more candidates give the cross-encoder more near-miss distractors to
+  promote.
+- On dev, reranking **significantly improves ranking quality**: MRR +0.067 (paired CI
+  [+0.004, +0.132]) and NDCG@10 +0.063 ([+0.017, +0.108]). Evidence Recall@5 is unchanged
+  (4 queries better, 4 worse).
+
+### Test-split results
+
+See [evaluation.md](evaluation.md#reranking-test-split). Reranked hybrid is the first
+configuration to beat BM25 significantly: Evidence Recall@5 0.837 vs 0.791, paired
++0.045 [+0.010, +0.083]. It costs about 2 s per query on MPS.
 
 ## Limitations
 

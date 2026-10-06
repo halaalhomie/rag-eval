@@ -166,3 +166,25 @@ def test_query_endpoint_serves_hybrid_with_component_ranks(indexed, factory):
     assert top["retriever"] == "hybrid" and top["title"] == "Probes"
     assert set(top["components"]) == {"dense", "bm25"}  # found by both retrievers
     assert top["components"]["bm25"]["rank"] == 1
+
+
+# ---------------------------------------------------------------- reranking
+def test_query_endpoint_serves_hybrid_rerank_with_rerank_top_k(indexed, factory, monkeypatch):
+    from app.retrieval import reranker as reranker_module
+
+    def fake_scores(pairs):
+        return [3.0 if "secret" in p.lower() else 0.0 for _, p in pairs]
+
+    fake = reranker_module.CrossEncoderReranker("fake", score_fn=fake_scores)
+    monkeypatch.setattr("app.rag.strategies.get_reranker", lambda settings: fake)
+    llm = FakeLLM(replies=["A secret stores sensitive data [1]."])
+    app = create_app()
+    app.dependency_overrides[get_components] = lambda: Components(llm, indexed, factory)
+    resp = TestClient(app).post("/query", json={"query": "probe data", "strategy": "hybrid_rerank"})
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["retrieval_strategy"] == "hybrid_rerank"
+    top = body["contexts"][0]
+    assert top["title"] == "Secrets"  # promoted by the (fake) cross-encoder
+    assert {"first_stage", "reranker"} <= set(top["components"])
+    assert len(body["contexts"]) <= 5  # RERANK_TOP_K is the default context count

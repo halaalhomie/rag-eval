@@ -27,20 +27,27 @@ class BaselineRAG:
     name = "baseline"
 
     def __init__(
-        self, retriever: Retriever, llm: LLMClient, settings: Settings, name: str | None = None
+        self,
+        retriever: Retriever,
+        llm: LLMClient,
+        settings: Settings,
+        name: str | None = None,
+        default_top_k: int | None = None,
     ):
         self.retriever = retriever
         self.llm = llm
         self.settings = settings
         if name:
             self.name = name
+        # Reranked pipelines pass fewer, better contexts (RERANK_TOP_K) by default.
+        self.default_top_k = default_top_k or settings.retrieval.top_k
 
     def run(
         self, query: str, *, top_k: int | None = None, filters: MetadataFilter | None = None
     ) -> RAGResult:
         started = time.perf_counter()
         usage = UsageTracker(self.settings.llm)
-        k = top_k or self.settings.retrieval.top_k
+        k = top_k or self.default_top_k
 
         contexts = self.retriever.retrieve(query, k, filters)
         retrieval_s = time.perf_counter() - started

@@ -329,6 +329,58 @@ How to read this:
 - **Hybrid has the best recall at depth (0.909 at 20).** That makes it the natural
   candidate generator for the reranker in the next phase, which re-orders a deeper list.
 
+## Reranking (test split)
+
+Run `20261006T183435-retrieval-hybrid_rerank-test`: hybrid top 20, reranked by
+`BAAI/bge-reranker-base` on MPS. Depth was chosen on dev (see
+[retrieval.md](retrieval.md#cross-encoder-reranking)). Paired differences:
+
+| Metric | Hybrid | Hybrid + rerank | vs hybrid (95% CI) | vs BM25 (95% CI) |
+|---|---:|---:|---:|---:|
+| Evidence Recall@5 | 0.802 | **0.837** | **+0.034** [+0.003, +0.069] | **+0.045** [+0.010, +0.083] |
+| Evidence Recall@10 | 0.859 | **0.893** | **+0.034** [+0.008, +0.064] | **+0.049** [+0.013, +0.087] |
+| MRR | 0.723 | **0.760** | +0.037 [−0.004, +0.077] | +0.035 [−0.007, +0.079] |
+| NDCG@10 | 0.714 | **0.758** | **+0.044** [+0.013, +0.074] | **+0.043** [+0.011, +0.077] |
+| Latency p50 | 39 ms | 1.96 s | | |
+
+The reranked configuration's own 95% CI is 0.789–0.882 for Evidence Recall@5 and
+0.712–0.810 for MRR. Its Evidence Recall@20 equals hybrid's (0.909) by construction: the
+reranker only re-orders hybrid's top 20.
+
+By question type (Evidence Recall@5):
+
+| Type | n | Dense | BM25 | Hybrid | Hybrid + rerank |
+|---|---:|---:|---:|---:|---:|
+| keyword_heavy | 31 | 0.871 | 0.935 | 0.935 | **1.000** |
+| simple_factual | 42 | 0.821 | 0.905 | 0.881 | **0.929** |
+| numerical | 21 | 0.571 | **0.952** | 0.809 | 0.905 |
+| adversarial | 17 | 0.824 | **1.000** | **1.000** | 0.941 |
+| semantic | 31 | 0.672 | 0.710 | 0.806 | **0.839** |
+| multi_hop | 26 | 0.641 | 0.689 | **0.760** | 0.718 |
+| comparison | 13 | 0.449 | 0.368 | 0.468 | **0.537** |
+| ambiguous | 17 | 0.471 | 0.471 | 0.471 | **0.529** |
+
+How to read this:
+
+- **The first configuration to beat BM25 significantly** (Evidence Recall@5 +0.045, CI
+  [+0.010, +0.083]; NDCG@10 +0.043). It is best on 6 of 8 question types.
+- **It recovers most of hybrid's numerical loss** (0.81 → 0.91), and it moves ambiguous
+  questions off 0.47 for the first time (0.53; MRR +0.15 over hybrid). A cross-encoder can
+  sometimes match a vague question to the right passage when the question shares no
+  distinctive words with it.
+- **It slightly hurts multi-hop (−0.042) and adversarial (−0.059) questions.** A
+  cross-encoder scores each passage independently against the whole question. For a
+  two-part question, the passage covering one half can lose to a passage that looks
+  relevant to all of it. False-premise questions contain a wrong number, and the reranker
+  may prefer passages that echo it.
+- **Dev and test disagree on which metric moves.** On dev, MRR improved significantly
+  and Evidence Recall@5 did not. On test it is the reverse. Both splits move in the same
+  direction, but which metric crosses significance depends on sampling noise at these
+  sizes (88 dev, 198 test). This is a reminder not to over-read a single metric.
+- **The cost is real:** about 2 s per query on MPS (50× hybrid), for +0.034 Evidence
+  Recall@5. Whether that is worth it depends on the latency budget. Phase 14's experiment
+  runner will put quality, latency and cost side by side for every configuration.
+
 ## Running
 
 ```bash
@@ -336,6 +388,7 @@ python scripts/create_eval_dataset.py                    # needs the LLM server
 python scripts/run_retrieval_eval.py --retriever dense --split test
 python scripts/run_retrieval_eval.py --retriever bm25 --split test
 python scripts/run_retrieval_eval.py --retriever hybrid --split test
+RERANKER_DEVICE=mps python scripts/run_retrieval_eval.py --retriever hybrid_rerank --split test
 python scripts/compare_retrieval_runs.py data/experiments/<dense-run> data/experiments/<bm25-run>
 python scripts/export_review_sheet.py --per-type 5       # CSV for human spot checks
 ```

@@ -52,7 +52,8 @@ config validation.
 | 4 | Evaluation dataset (316 synthetic, validated items), retrieval metrics, dense baseline | done |
 | 5 | BM25 (tokenizer and k1/b chosen on dev; paired comparison with dense) | done |
 | 6 | Hybrid retrieval (weighted RRF / linear fusion; config chosen on dev by a fixed rule) | done |
-| 7–8 | Reranking, parent-child | planned |
+| 7 | Cross-encoder reranking (bge-reranker-base over hybrid top 20; depth chosen on dev) | done |
+| 8 | Parent-child retrieval | planned |
 | 9–12 | Query rewriting, Corrective RAG, Self-RAG-inspired loop, claim verification | planned |
 | 13–18 | Observability, experiment runner, benchmarks, docs, deployment | planned |
 
@@ -88,12 +89,13 @@ each question's required evidence spans found in the top 5.
 | Dense RAG | 0.701 (95% CI 0.641–0.759) | 0.624 (0.573–0.682) | TBD | TBD | TBD | TBD |
 | BM25 | **0.791** (0.740–0.842) | **0.725** (0.671–0.776) | TBD | TBD | TBD | TBD |
 | Hybrid | **0.802** (0.750–0.852) | 0.723 (0.672–0.776) | TBD | TBD | TBD | TBD |
-| Hybrid + Reranker | TBD | TBD | TBD | TBD | TBD | TBD |
+| Hybrid + Reranker | **0.837** (0.789–0.882) | **0.760** (0.712–0.810) | TBD | TBD | TBD | TBD |
 | Hybrid + Reranker + Rewrite | TBD | TBD | TBD | TBD | TBD | TBD |
 | Corrective RAG | TBD | TBD | TBD | TBD | TBD | TBD |
 | Self-RAG-inspired | TBD | TBD | TBD | TBD | TBD | TBD |
 
-Retrieval alone takes 24 ms at p50 for dense, 3.9 ms for BM25 and 39 ms for hybrid.
+Retrieval alone takes 24 ms at p50 for dense, 3.9 ms for BM25, 39 ms for hybrid and
+1.96 s for hybrid + reranker (MPS).
 End-to-end latency, cost and the generation metrics stay TBD until the generation
 evaluation runs.
 
@@ -107,11 +109,16 @@ different from BM25 overall** (+0.011, 95% CI [−0.024, +0.048]). It gains on s
 multi-hop and comparison questions, loses on numerical ones, and is best or tied-best on 6
 of 8 question types.
 
+Cross-encoder reranking of hybrid's top 20 is the **first configuration to beat BM25
+significantly** (Evidence Recall@5 +0.045, 95% CI [+0.010, +0.083]), at about 2 s per
+query. It slightly hurts multi-hop and false-premise questions.
+
 ```bash
 python scripts/create_eval_dataset.py                       # generate (needs the LLM server)
 python scripts/run_retrieval_eval.py --retriever dense --split test
 python scripts/run_retrieval_eval.py --retriever bm25 --split test
 python scripts/run_retrieval_eval.py --retriever hybrid --split test
+RERANKER_DEVICE=mps python scripts/run_retrieval_eval.py --retriever hybrid_rerank --split test
 python scripts/compare_retrieval_runs.py data/experiments/<run-a> data/experiments/<run-b>
 ```
 
@@ -218,7 +225,7 @@ startup. [.env.example](.env.example) documents every variable. Highlights:
 | Variable | Default | Purpose |
 |---|---|---|
 | `RAG_STRATEGY` | `baseline` | `baseline`, `dense`, `bm25`, `hybrid`, `hybrid_rerank`, `hybrid_rerank_rewrite`, `corrective`, `self_rag`, `adaptive` |
-| `TOP_K` / `RERANK_TOP_K` | 10 / 5 | final context counts |
+| `TOP_K` / `RERANK_TOP_K` / `RERANK_CANDIDATES` | 10 / 5 / 20 | context counts; reranker candidate depth |
 | `CHILD_CHUNK_SIZE` / `CHILD_CHUNK_OVERLAP` / `PARENT_CHUNK_SIZE` | 360 / 60 / 1600 | chunking (calibrated approximate tokens) |
 | `EMBEDDING_MODEL` / `EMBEDDING_INCLUDE_CONTEXT` | `BAAI/bge-small-en-v1.5` / `true` | local embedder; embed chunks with their title and section path |
 | `DENSE_WEIGHT` / `BM25_WEIGHT` / `RRF_K` | 0.5 / 0.5 / 60 | fusion |
@@ -239,7 +246,7 @@ app/
   config/         validated settings
   db/             SQLAlchemy models, session, schema init
   ingestion/      loaders, Hugo preprocessing, parent/child chunking, pipeline
-  retrieval/      retriever interface, embeddings, dense (pgvector), BM25 + analyzer, hybrid fusion
+  retrieval/      retriever interface, embeddings, dense, BM25 + analyzer, hybrid fusion, reranker
   rag/            strategies (baseline), prompts; graph/graders in phases 9–12
   generation/     LLM provider layer, structured output, citations, usage/cost
   evaluation/     synthetic dataset generation + validators, span labels, retrieval metrics/runner

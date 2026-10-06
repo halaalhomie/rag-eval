@@ -15,6 +15,7 @@ from app.generation.usage import UsageSummary
 from app.rag.strategies import Components, StrategyNotImplementedError, build_pipeline
 from app.rag.types import Timings
 from app.retrieval.embeddings import EmbeddingError, get_embedder
+from app.retrieval.reranker import RerankerError
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["query"])
@@ -81,6 +82,11 @@ def query(
         result = pipeline.run(req.query, top_k=req.top_k, filters=req.filters)
     except StrategyNotImplementedError as exc:
         raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, str(exc)) from exc
+    except RerankerError as exc:
+        logger.exception("Reranker failure")
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE, "reranker model unavailable"
+        ) from exc
     except EmbeddingError as exc:
         logger.exception("Embedding failure")
         raise HTTPException(
